@@ -1,0 +1,1693 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Process Diagrams — Company-Test B2B — Flux Front/Back</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #1a1a2e; font-size: 14px; }
+    :root {
+      --primary: #2563eb; --primary-light: #dbeafe; --border: #cbd5e1;
+      --text-muted: #64748b; --text-label: #374151;
+      --success: #16a34a; --warning: #d97706; --error: #dc2626;
+      --shadow: 0 1px 4px rgba(0,0,0,0.10); --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+      --radius: 6px;
+    }
+
+    /* HEADER */
+    .site-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+      color: white; padding: 18px 32px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .site-header h1 { font-size: 18px; font-weight: 600; }
+    .site-header .meta { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+    .agent-badge {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 600;
+    }
+
+    /* NAV */
+    .nav-tabs {
+      display: flex; flex-wrap: wrap; background: white;
+      border-bottom: 2px solid var(--border); padding: 0 24px; gap: 2px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .tab-btn {
+      padding: 12px 14px; border: none; background: transparent; cursor: pointer;
+      font-size: 12px; font-weight: 500; color: var(--text-muted);
+      border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--primary); }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+    .tab-code { font-size: 10px; background: #e2e8f0; border-radius: 3px; padding: 1px 5px; margin-right: 5px; font-weight: 700; }
+    .tab-btn.active .tab-code { background: var(--primary-light); color: var(--primary); }
+
+    /* MAIN */
+    .main { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+    .diagram-section { display: none; }
+    .diagram-section.active { display: block; }
+
+    /* DIAGRAM HEADER */
+    .diag-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .diag-header h2 { font-size: 20px; font-weight: 700; color: #0f172a; }
+    .diag-header .diag-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .diag-header .diag-sub strong { color: var(--primary); }
+
+    /* META CHIPS */
+    .meta-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .chip {
+      background: white; border: 1px solid var(--border); border-radius: 4px;
+      padding: 4px 10px; font-size: 11px; color: var(--text-muted);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .chip strong { color: #1e293b; }
+    .chip.us { border-color: var(--primary-light); background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .chip.drupal { border-color: #e0e7ff; background: #e0e7ff; color: #3730a3; }
+    .chip.actor { border-color: #dcfce7; background: #dcfce7; color: #166534; }
+
+    /* DIAGRAM CARD */
+    .diag-card {
+      background: white; border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; box-shadow: var(--shadow-lg); margin-bottom: 20px;
+    }
+    .diag-card-header {
+      background: #f8fafc; border-bottom: 1px solid var(--border);
+      padding: 10px 16px; font-size: 11px; font-weight: 700; color: #475569;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .diag-body { padding: 20px; overflow-x: auto; }
+    .diag-body .mermaid { display: flex; justify-content: center; }
+
+    /* DESCRIPTION BOX */
+    .desc-box {
+      background: #f8fafc; border-left: 4px solid var(--primary);
+      border-radius: 0 4px 4px 0; padding: 12px 16px; margin-bottom: 16px;
+      font-size: 12px; color: #374151; line-height: 1.6;
+    }
+    .desc-box strong { color: #1e293b; }
+
+    /* ACTORS TABLE */
+    .actors-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 16px; }
+    .actors-table th { background: #f1f5f9; padding: 6px 10px; text-align: left; font-weight: 700; color: #475569; border-bottom: 1px solid var(--border); }
+    .actors-table td { padding: 6px 10px; border-bottom: 1px solid #f1f5f9; }
+    .actors-table .role-front { color: var(--primary); font-weight: 600; }
+    .actors-table .role-back { color: #7c3aed; font-weight: 600; }
+    .actors-table .role-ext { color: var(--success); font-weight: 600; }
+    .actors-table .role-user { color: var(--warning); font-weight: 600; }
+
+    /* LEGEND */
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 2px; }
+
+    /* TWO COL LAYOUT */
+    .two-col { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+
+    /* SIDE PANEL */
+    .side-panel { background: white; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+    .side-panel-header { background: #f8fafc; border-bottom: 1px solid var(--border); padding: 10px 14px; font-size: 12px; font-weight: 700; color: #374151; }
+    .side-panel-body { padding: 12px; }
+    .step-item { padding: 8px 10px; border-radius: 4px; margin-bottom: 6px; background: #f8fafc; border-left: 3px solid var(--primary); }
+    .step-item.back { border-left-color: #7c3aed; }
+    .step-item.ext { border-left-color: var(--success); }
+    .step-item.decision { border-left-color: var(--warning); }
+    .step-num { font-size: 10px; font-weight: 700; color: var(--primary); }
+    .step-desc { font-size: 11px; color: #374151; margin-top: 2px; }
+    .step-tech { font-size: 9px; color: var(--text-muted); font-family: 'Courier New', monospace; margin-top: 2px; }
+
+    @media print {
+      .nav-tabs { display: none; }
+      .diagram-section { display: block !important; page-break-before: always; }
+      .diagram-section:first-child { page-break-before: avoid; }
+      .two-col { grid-template-columns: 1fr; }
+      @page { size: A3 landscape; margin: 10mm; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="site-header">
+  <div>
+    <h1>Business Process Diagrams — Flux Front / Back</h1>
+    <div class="meta">Company-Test e-Commerce B2B · Drupal 10 + Commerce 2.x · Agent : AGENT-BUSINESS-ANALYST.md</div>
+  </div>
+  <div class="agent-badge">16 diagrammes · Sprint 1 → IP</div>
+</div>
+
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="showTab('bp001',this)"><span class="tab-code">BP-001</span>Architecture globale</button>
+  <button class="tab-btn" onclick="showTab('bp002',this)"><span class="tab-code">BP-002</span>Inscription B2B</button>
+  <button class="tab-btn" onclick="showTab('bp003',this)"><span class="tab-code">BP-003</span>Connexion + Flood</button>
+  <button class="tab-btn" onclick="showTab('bp004',this)"><span class="tab-code">BP-004</span>Validation compte</button>
+  <button class="tab-btn" onclick="showTab('bp005',this)"><span class="tab-code">BP-005</span>Catalogue &amp; Prix B2B</button>
+  <button class="tab-btn" onclick="showTab('bp006',this)"><span class="tab-code">BP-006</span>Commande complète</button>
+  <button class="tab-btn" onclick="showTab('bp007',this)"><span class="tab-code">BP-007</span>Paiement Stripe</button>
+  <button class="tab-btn" onclick="showTab('bp008',this)"><span class="tab-code">BP-008</span>Emails SendGrid</button>
+  <button class="tab-btn" onclick="showTab('bp009',this)"><span class="tab-code" style="background:#fce7f3;color:#9d174d;">BP-009</span>3D Secure Stripe</button>
+  <button class="tab-btn" onclick="showTab('bp010',this)"><span class="tab-code" style="background:#fce7f3;color:#9d174d;">BP-010</span>Facture PDF</button>
+  <button class="tab-btn" onclick="showTab('bp011',this)"><span class="tab-code" style="background:#fce7f3;color:#9d174d;">BP-011</span>Historique commandes</button>
+  <button class="tab-btn" onclick="showTab('bp012',this)"><span class="tab-code" style="background:#fef9c3;color:#713f12;">BP-012</span>Frais livraison</button>
+  <button class="tab-btn" onclick="showTab('bp013',this)"><span class="tab-code" style="background:#fef9c3;color:#713f12;">BP-013</span>Tracking transporteur</button>
+  <button class="tab-btn" onclick="showTab('bp014',this)"><span class="tab-code" style="background:#fef9c3;color:#713f12;">BP-014</span>Filtres catalogue</button>
+  <button class="tab-btn" onclick="showTab('bp015',this)"><span class="tab-code" style="background:#fef9c3;color:#713f12;">BP-015</span>Tarifs négociés</button>
+  <button class="tab-btn" onclick="showTab('bp016',this)"><span class="tab-code" style="background:#f0fdf4;color:#14532d;">BP-016</span>Adresses multiples</button>
+</div>
+
+<div class="main">
+
+<!-- ============================================================ -->
+<!-- BP-001 — ARCHITECTURE GLOBALE                                -->
+<!-- ============================================================ -->
+<div id="bp001" class="diagram-section active">
+  <div class="diag-header">
+    <div>
+      <h2>BP-001 — Architecture Front / Back — Vue d'ensemble</h2>
+      <div class="diag-sub">Couches : Navigateur → Drupal 10 → Module Company-Test_b2b → Services tiers → Data Layer</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip actor">👥 Tous acteurs</div>
+    <div class="chip drupal">⚙️ Module Company-Test_b2b complet</div>
+    <div class="chip">🗓 Sprint 1 + 2</div>
+  </div>
+  <div class="desc-box">
+    Vue d'ensemble de l'architecture : <strong>6 composants custom</strong> du module Company-Test_b2b interconnectés avec Drupal Commerce 2.x, MySQL 8.0, Redis 7.x et les 3 services tiers (Stripe, SendGrid, Chronopost). Les flèches pleines = appels synchrones ; les flèches pointillées = événements Symfony.
+  </div>
+  <div class="diag-card">
+    <div class="diag-card-header"><span>📐 Diagramme d'architecture — graph TB</span><span style="font-size:10px;color:#94a3b8;">Mermaid 10</span></div>
+    <div class="diag-body">
+      <pre class="mermaid">
+graph TB
+    Browser["🌐 Navigateur / Twig Templates"]
+
+    subgraph Drupal["Drupal 10 Core"]
+        Router["Router / EventDispatcher"]
+        Views["Views Module"]
+        UserAuth["User Auth System"]
+        subgraph Commerce["Drupal Commerce 2.x"]
+            CommerceCore["Cart / Checkout / Order"]
+            CommercePrice["Price Calculator"]
+        end
+    end
+
+    subgraph Company-TestMod["Module custom — Company-Test_b2b"]
+        PriceSub["B2bPriceSubscriber\n(PriceCalculateEvent)"]
+        LoginSub["B2bLoginSubscriber\n(UserLoginEvent)"]
+        SiretVal["SiretConstraintValidator\n(Kernel Constraint)"]
+        AccountSvc["AccountValidationService\n(SendGrid + DB)"]
+        CartAccess["B2bCartAccessSubscriber\n(CartAccessEvent)"]
+        OrderSub["OrderConfirmationSubscriber\n(OrderCompleteEvent)"]
+    end
+
+    subgraph DataLayer["Data Layer"]
+        MySQL[("MySQL 8.0\nEntités Drupal")]
+        Redis[("Redis 7.x\nCache Views")]
+    end
+
+    subgraph External["Services Tiers"]
+        Stripe["Stripe API\nPaiement CB"]
+        SendGrid["SendGrid\nEmails transactionnels"]
+        Chronopost["Chronopost API\nExpédition"]
+    end
+
+    Browser -->|"HTTP/HTTPS"| Router
+    Router --> Views
+    Router --> UserAuth
+    Router --> CommerceCore
+    CommercePrice -.->|"PriceCalculateEvent"| PriceSub
+    UserAuth -.->|"UserLoginEvent"| LoginSub
+    UserAuth -.->|"hook_user_insert"| SiretVal
+    CommerceCore -.->|"CartAccessEvent"| CartAccess
+    CommerceCore -.->|"OrderCompleteEvent"| OrderSub
+
+    Views --> MySQL
+    CommerceCore --> MySQL
+    UserAuth --> MySQL
+    Views --> Redis
+    CommerceCore --> Redis
+
+    CommerceCore -->|"Stripe PHP SDK"| Stripe
+    AccountSvc -->|"REST API v3"| SendGrid
+    OrderSub -->|"REST API v3"| SendGrid
+    CommerceCore -->|"REST API"| Chronopost
+
+    classDef front fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef back fill:#ede9fe,stroke:#7c3aed,color:#3b0764
+    classDef data fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef ext fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef custom fill:#fce7f3,stroke:#db2777,color:#831843
+
+    class Browser front
+    class Router,Views,UserAuth,Commerce,CommerceCore,CommercePrice back
+    class PriceSub,LoginSub,SiretVal,AccountSvc,CartAccess,OrderSub custom
+    class MySQL,Redis data
+    class Stripe,SendGrid,Chronopost ext
+      </pre>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-002 — FLUX INSCRIPTION B2B                                -->
+<!-- ============================================================ -->
+<div id="bp002" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-002 — Flux Inscription B2B (US-005)</h2>
+      <div class="diag-sub">De la saisie du formulaire à la confirmation + notification admin</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-005</div>
+    <div class="chip actor">👤 Thomas Mercier</div>
+    <div class="chip drupal">⚙️ SiretConstraintValidator · hook_user_insert · AccountValidationService</div>
+    <div class="chip">🗓 Sprint 1</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">
+        Flux de création de compte B2B en 3 phases : <strong>validation formulaire</strong> (SIRET + email), <strong>création user</strong> avec statut <code>en_attente</code>, puis <strong>double notification</strong> (Thomas + Admin Company-Test via SendGrid).
+      </div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Diagramme de séquence — sequenceDiagram</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+sequenceDiagram
+    actor Thomas as Thomas (Acheteur B2B)
+    participant Form as Formulaire Drupal
+    participant SiretVal as SiretConstraintValidator
+    participant DB as MySQL
+    participant Hook as hook_user_insert
+    participant AccountSvc as AccountValidationService
+    participant SendGrid as SendGrid API
+    participant Admin as Admin Company-Test
+
+    Thomas->>Form: Remplit formulaire (SIRET, email, mdp)
+    Form->>SiretVal: Validation blur (SIRET)
+    alt SIRET invalide (different de 14 chiffres)
+        SiretVal-->>Form: ConstraintViolation
+        Form-->>Thomas: Erreur inline - SIRET invalide
+    else SIRET valide (14 chiffres)
+        SiretVal-->>Form: OK
+    end
+
+    Thomas->>Form: Soumet le formulaire
+    Form->>DB: Verifie unicite email
+    alt Email deja enregistre
+        DB-->>Form: Conflict - email existant
+        Form-->>Thomas: Erreur - Un compte existe avec cet email
+    else Email disponible
+        DB-->>Form: OK
+    end
+
+    Form->>DB: INSERT user (status=en_attente, field_siret)
+    DB-->>Form: user_id cree
+    Form->>Hook: hook_user_insert(user)
+    Hook->>AccountSvc: notifyNewRegistration(user)
+    AccountSvc->>SendGrid: POST /mail/send (template confirmation-inscription, to Thomas)
+    SendGrid-->>AccountSvc: 202 Accepted
+    AccountSvc->>SendGrid: POST /mail/send (template alerte-admin, to Admin)
+    SendGrid-->>AccountSvc: 202 Accepted
+    SendGrid-->>Thomas: Email - Demande recue, validation sous 24h
+    SendGrid-->>Admin: Email - Nouveau compte a valider
+    Form-->>Thomas: Page confirmation (route Company-TestsRegisterController)
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">📋 Étapes clés</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-num">1 — FRONT</div><div class="step-desc">Validation SIRET au blur (pas en temps réel)</div><div class="step-tech">SiretConstraintValidator::validate()</div></div>
+          <div class="step-item decision"><div class="step-num">2 — DÉCISION</div><div class="step-desc">Unicité email vérifiée avant création</div><div class="step-tech">user.register form validation</div></div>
+          <div class="step-item back"><div class="step-num">3 — BACK</div><div class="step-desc">User créé avec statut en_attente</div><div class="step-tech">field_compte_statut = en_attente</div></div>
+          <div class="step-item back"><div class="step-num">4 — BACK</div><div class="step-desc">hook_user_insert déclenché</div><div class="step-tech">Company-Test_b2b.module</div></div>
+          <div class="step-item ext"><div class="step-num">5 — EXT</div><div class="step-desc">2 emails SendGrid envoyés</div><div class="step-tech">template: confirmation-inscription, alerte-admin</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚠️ Cas d'erreur</div>
+        <div class="side-panel-body">
+          <div class="step-item decision"><div class="step-desc">SIRET ≠ 14 chiffres → erreur inline blur</div></div>
+          <div class="step-item decision"><div class="step-desc">Email déjà utilisé → liens Se connecter + Mot de passe oublié</div></div>
+          <div class="step-item decision"><div class="step-desc">SendGrid down → log Drupal, email retry via queue</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-003 — FLUX CONNEXION + FLOOD CONTROL                      -->
+<!-- ============================================================ -->
+<div id="bp003" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-003 — Flux Connexion B2B + Flood Control (US-006)</h2>
+      <div class="diag-sub">Machine à états : login → Flood API → B2bLoginSubscriber → statut compte → session</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-006</div>
+    <div class="chip actor">👤 Thomas Mercier</div>
+    <div class="chip drupal">⚙️ user.login · Flood API · B2bLoginSubscriber</div>
+    <div class="chip">🗓 Sprint 1</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">
+        4 états possibles à l'issue d'une tentative de connexion : <strong>session créée</strong> (compte actif), <strong>blocage temporaire</strong> (5 tentatives, flood_window config), <strong>compte en attente</strong> (validation admin), <strong>compte refusé</strong>. Le B2bLoginSubscriber intercepte UserLoginEvent pour vérifier le statut B2B.
+      </div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Flowchart — Machine à états connexion</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+flowchart TD
+    A([Acces /user/login]) --> B[Saisie email + mot de passe]
+    B --> C{Flood API\nTentatives >= 5 ?}
+    C -->|Oui| BLOCK[Compte bloque]
+    BLOCK --> COUNTDOWN[Affiche countdown mm:ss\ndepuis flood_window config]
+    COUNTDOWN --> DISABLED[Bouton Se connecter desactive]
+    DISABLED --> FORGOT[Lien Mot de passe oublie ?]
+
+    C -->|Non| CHECK[Drupal verifie identifiants\nMD5/bcrypt hash]
+    CHECK --> VALID{Identifiants\ncorrects ?}
+
+    VALID -->|Non| FLOOD1[Flood API +1 tentative]
+    FLOOD1 --> COUNT2{Tentatives >= 2 ?}
+    COUNT2 -->|Oui| SHOW_COUNT[Affiche compteur\nrestantes 3/5]
+    COUNT2 -->|Non| SIMPLE_ERR[Message erreur simple\nsans compteur]
+    SHOW_COUNT --> RETRY[Retour formulaire]
+    SIMPLE_ERR --> RETRY
+
+    VALID -->|Oui| FLOOD_RESET[Flood API reset\npour cet email]
+    FLOOD_RESET --> SUBSCRIBER[B2bLoginSubscriber\ndeclenche UserLoginEvent]
+    SUBSCRIBER --> STATUS{field_compte_statut ?}
+
+    STATUS -->|en_attente| WAIT_KICK[Invalide session\nimmediate]
+    WAIT_KICK --> WAIT_MSG[Affiche message:\nValidation sous 24h\n+ bouton Contacter]
+
+    STATUS -->|refuse| REFUSE_KICK[Invalide session\nimmediate]
+    REFUSE_KICK --> REFUSE_MSG[Affiche message:\nDemande refusee\n+ bouton Contacter]
+
+    STATUS -->|active| SESSION[Session Drupal creee\nRoles b2b_buyer assignes]
+    SESSION --> REDIRECT[Redirect /catalogue]
+
+    classDef danger fill:#fef2f2,stroke:#dc2626,color:#991b1b
+    classDef success fill:#f0fdf4,stroke:#16a34a,color:#14532d
+    classDef warn fill:#fffbeb,stroke:#d97706,color:#92400e
+    classDef info fill:#eff6ff,stroke:#2563eb,color:#1e3a8a
+
+    class BLOCK,COUNTDOWN,DISABLED,FLOOD1,SIMPLE_ERR,SHOW_COUNT,WAIT_KICK,WAIT_MSG,REFUSE_KICK,REFUSE_MSG danger
+    class SESSION,REDIRECT,FLOOD_RESET success
+    class COUNT2,SUBSCRIBER,STATUS warn
+    class A,B,C,CHECK,VALID,RETRY,FORGOT info
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">🔒 Flood Control — Config Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-desc">flood.settings.yml</div><div class="step-tech">user.failed_login_ip: 50<br>user.failed_login_user: 5<br>flood_window: 3600 (1h)</div></div>
+          <div class="step-item back"><div class="step-desc">Countdown calculé en JS</div><div class="step-tech">flood_expire_time - Date.now()</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">📌 B2bLoginSubscriber</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-num">Écoute :</div><div class="step-tech">Drupal\user\Event\UserLoginEvent</div></div>
+          <div class="step-item back"><div class="step-num">Lit :</div><div class="step-tech">field_compte_statut sur le user</div></div>
+          <div class="step-item back"><div class="step-num">Valeurs :</div><div class="step-tech">en_attente | refuse | active</div></div>
+          <div class="step-item back"><div class="step-num">Si bloqué :</div><div class="step-tech">user_logout() + MessengerInterface</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">🎨 WF-006 associé</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-desc">État nominal → formulaire vide</div></div>
+          <div class="step-item decision"><div class="step-desc">Identifiants incorrects + compteur</div></div>
+          <div class="step-item decision"><div class="step-desc">Compte en attente → CTA contact</div></div>
+          <div class="step-item decision"><div class="step-desc">Compte bloqué → countdown + bouton disabled</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-004 — FLUX VALIDATION COMPTE ADMIN                        -->
+<!-- ============================================================ -->
+<div id="bp004" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-004 — Flux Validation Compte Admin Company-Test (US-007)</h2>
+      <div class="diag-sub">Admin reçoit alerte → review manuelle → approve/refuse → email activation</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-007</div>
+    <div class="chip actor">👤 Isabelle Royer (Admin ADV)</div>
+    <div class="chip actor">👤 Thomas Mercier</div>
+    <div class="chip drupal">⚙️ AccountValidationService · SendGrid · back-office Drupal</div>
+    <div class="chip">🗓 Sprint 2</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">
+        Processus de <strong>validation manuelle</strong> par l'admin Company-Test (Isabelle) : consultation dossier SIRET, décision Approuve / Demande complément / Refuse, puis mise à jour du statut via AccountValidationService et envoi email SendGrid. Délai cible : 24h max.
+      </div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Flowchart — Validation compte B2B</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+flowchart TD
+    START([Admin recoit email alerte\nalerte-admin template SendGrid]) --> LOGIN[Connexion back-office Drupal\nrole Company-Test_admin]
+    LOGIN --> LIST[Vue Liste Comptes en attente\nAdmin > Gestion comptes B2B]
+    LIST --> REVIEW[Ouvre dossier Thomas\nSIRET + email + raison sociale]
+    REVIEW --> CHECK{Verification\nmanuelle SIRET}
+
+    CHECK -->|SIRET incoherent ou suspect| COMPLEMENT[Demande de complement\nvia email direct]
+    COMPLEMENT --> THOMAS_REPLY([Thomas repond par email])
+    THOMAS_REPLY --> CHECK
+
+    CHECK -->|Donnees valides| APPROVE[Clique Approuver\nbouton back-office]
+    APPROVE --> UPDATE_ACTIVE[AccountValidationService\nstatut = active]
+    UPDATE_ACTIVE --> ROLE[Attribue role b2b_buyer\na l utilisateur]
+    ROLE --> EMAIL_OK[SendGrid: template compte-active\nTo: Thomas]
+    EMAIL_OK --> THOMAS_ACTIVE([Thomas recoit email\nCompte active - Se connecter])
+
+    CHECK -->|Non professionnel ou fraude| REFUSE[Clique Refuser\nbouton back-office]
+    REFUSE --> UPDATE_REFUSE[AccountValidationService\nstatut = refuse]
+    UPDATE_REFUSE --> EMAIL_KO[SendGrid: template compte-refuse\nTo: Thomas]
+    EMAIL_KO --> THOMAS_REFUSE([Thomas recoit email\nDemande refusee])
+
+    classDef admin fill:#ede9fe,stroke:#7c3aed,color:#3b0764
+    classDef thomas fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef success fill:#f0fdf4,stroke:#16a34a,color:#14532d
+    classDef danger fill:#fef2f2,stroke:#dc2626,color:#991b1b
+    classDef ext fill:#dcfce7,stroke:#16a34a,color:#14532d
+
+    class START,LOGIN,LIST,REVIEW,CHECK,COMPLEMENT admin
+    class THOMAS_REPLY,THOMAS_ACTIVE,THOMAS_REFUSE thomas
+    class APPROVE,UPDATE_ACTIVE,ROLE,EMAIL_OK success
+    class REFUSE,UPDATE_REFUSE,EMAIL_KO danger
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">⏱ SLA &amp; Contraintes</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-num">Délai cible</div><div class="step-desc">Validation sous 24h (communiqué à Thomas)</div></div>
+          <div class="step-item back"><div class="step-num">Email alerte admin</div><div class="step-desc">Envoyé immédiatement à hook_user_insert</div></div>
+          <div class="step-item back"><div class="step-num">Rôle attribué</div><div class="step-desc">b2b_buyer → accès catalogue + prix B2B</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ AccountValidationService</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">activateAccount(User $user)</div><div class="step-desc">field_compte_statut = active + rôle</div></div>
+          <div class="step-item back"><div class="step-tech">refuseAccount(User $user)</div><div class="step-desc">field_compte_statut = refuse</div></div>
+          <div class="step-item ext"><div class="step-tech">SendGrid::send(template, to)</div><div class="step-desc">Email transactionnel avec lien connexion</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">🔗 Lié à</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-desc">BP-002 — Inscription (amont)</div></div>
+          <div class="step-item"><div class="step-desc">BP-003 — Connexion (aval)</div></div>
+          <div class="step-item"><div class="step-desc">WF-006 état 2 + 3 (en attente / refusé)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-005 — FLUX CATALOGUE & TARIFICATION B2B                   -->
+<!-- ============================================================ -->
+<div id="bp005" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-005 — Flux Catalogue &amp; Tarification B2B (US-001 / US-002)</h2>
+      <div class="diag-sub">Navigation catalogue → PriceSubscriber → affichage prix B2B ou masqué selon rôle</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-001</div>
+    <div class="chip us">US-002</div>
+    <div class="chip actor">👤 Thomas (b2b_buyer) + Visiteur anonyme</div>
+    <div class="chip drupal">⚙️ Views · B2bPriceSubscriber · Commerce Variation</div>
+    <div class="chip">🗓 Sprint 1</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">
+        Le <strong>B2bPriceSubscriber</strong> intercepte PriceCalculateEvent pour chaque produit : si l'utilisateur a le rôle <code>b2b_buyer</code>, le prix négocié est affiché ; sinon, <code>stopPropagation()</code> masque le prix et affiche les CTA de conversion. Le sélecteur de variations (bobines) recalcule le prix total via Ajax.
+      </div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Diagramme de séquence — Catalogue + Fiche produit</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+sequenceDiagram
+    actor User as Utilisateur (Thomas ou Anonyme)
+    participant Browser as Navigateur
+    participant Router as Drupal Router
+    participant Views as Views Module
+    participant Redis as Redis Cache
+    participant DB as MySQL
+    participant PriceSub as B2bPriceSubscriber
+    participant Commerce as Commerce Variation
+
+    User->>Browser: Acces /catalogue/cables-ftth
+    Browser->>Router: GET /catalogue/cables-ftth
+    Router->>Views: Charge vue catalogue_cables_ftth
+    Views->>Redis: Cache hit ?
+    alt Cache valide (TTL non expire)
+        Redis-->>Views: HTML cached
+    else Cache expire ou miss
+        Views->>DB: SELECT products WHERE category = cables-ftth
+        DB-->>Views: 12 produits + variations
+        Views->>Redis: SET cache (TTL 300s)
+    end
+
+    loop Calcul prix pour chaque produit
+        Views->>PriceSub: PriceCalculateEvent (variation, context)
+        alt User a role b2b_buyer
+            PriceSub-->>Views: Prix negocie B2B (ex: 12.50 EUR/m)
+        else User anonyme ou non-b2b
+            PriceSub-->>Views: stopPropagation - prix masque
+        end
+    end
+
+    Views-->>Router: HTML rendu (Twig)
+    Router-->>Browser: Page catalogue
+    Browser-->>User: Grille produits (prix B2B ou icone verrou)
+
+    User->>Browser: Clique Cable FTTH 4FO
+    Browser->>Router: GET /produit/cable-ftth-4fo-g657a2
+    Router->>DB: Charge Commerce Product + 3 Variations
+    DB-->>Router: Produit + bobine 100m/500m/1000m + prix par variation
+    Router-->>Browser: Fiche produit avec variation widget
+    Browser-->>User: Selecteur bobines + prix + total calcule
+
+    User->>Browser: Selectionne Bobine 500m
+    Browser->>Router: Ajax POST /cart/update-variation
+    Router->>PriceSub: PriceCalculateEvent (variation 500m)
+    PriceSub-->>Router: 12.50 EUR/m
+    Router-->>Browser: JSON prix + total (qty x prix)
+    Browser-->>User: Prix total mis a jour 6250 EUR HT
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">💰 Logique tarifaire B2B</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-num">Rôle requis</div><div class="step-tech">b2b_buyer</div><div class="step-desc">Attribué à validation compte</div></div>
+          <div class="step-item back"><div class="step-num">PriceCalculateEvent</div><div class="step-desc">Déclenché pour chaque variation affichée</div></div>
+          <div class="step-item back"><div class="step-num">stopPropagation()</div><div class="step-desc">Si non-b2b : prix non calculé → masqué côté Twig</div></div>
+          <div class="step-item ext"><div class="step-num">Ajax variation</div><div class="step-desc">Recalcul total sans rechargement page</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">🗄 Cache Redis</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-desc">Views résultats mis en cache Redis</div></div>
+          <div class="step-item back"><div class="step-desc">TTL 300s — invalide sur update produit</div></div>
+          <div class="step-item decision"><div class="step-desc">Prix NON cachés (rôle-dépendant)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-006 — FLUX COMMANDE COMPLÈTE                              -->
+<!-- ============================================================ -->
+<div id="bp006" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-006 — Flux Commande Complète (US-009 / US-010 / US-011)</h2>
+      <div class="diag-sub">Panier → Checkout 3 étapes → N° BC → Stripe → SendGrid → Chronopost</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-009</div>
+    <div class="chip us">US-010</div>
+    <div class="chip us">US-011</div>
+    <div class="chip actor">👤 Thomas Mercier (b2b_buyer)</div>
+    <div class="chip drupal">⚙️ B2bCartAccessSubscriber · PurchaseOrderPane · OrderConfirmationSubscriber</div>
+    <div class="chip">🗓 Sprint 2</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">
+        Flux complet : <strong>3 étapes checkout</strong> (adresse / N° Bon de Commande / paiement Stripe), <strong>contrôle d'accès panier</strong> (B2bCartAccessSubscriber), <strong>confirmation commande</strong> multi-canal (email Thomas + email Admin + tracking Chronopost).
+      </div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Diagramme de séquence — Commande complète</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+sequenceDiagram
+    actor Thomas as Thomas (B2B connecte)
+    participant Cart as Panier Commerce
+    participant CartAccess as B2bCartAccessSubscriber
+    participant Checkout as Checkout Flow (3 etapes)
+    participant DB as MySQL
+    participant Stripe as Stripe API
+    participant SendGrid as SendGrid
+    participant Chronopost as Chronopost API
+
+    Thomas->>Cart: Ajoute Cable 4FO x500m
+    Cart->>CartAccess: CartAccessEvent (user, order)
+    alt User n a pas role b2b_buyer
+        CartAccess-->>Cart: Acces refuse
+        Cart-->>Thomas: Redirect /user/login
+    else User b2b_buyer confirme
+        CartAccess-->>Cart: Acces autorise
+        Cart->>DB: INSERT/UPDATE order (etat: draft)
+        DB-->>Cart: order_id
+        Cart-->>Thomas: Panier mis a jour (quantite, total HT)
+    end
+
+    Thomas->>Checkout: Acces /checkout/order_id
+    Checkout-->>Thomas: Etape 1 - Adresse de livraison
+    Thomas->>Checkout: Saisit adresse chantier
+    Checkout->>DB: Enregistre adresse livraison
+
+    Checkout-->>Thomas: Etape 2 - N de Bon de Commande (obligatoire)
+    Note over Thomas,Checkout: PurchaseOrderPane custom - champ BC obligatoire
+    Thomas->>Checkout: Saisit N BC (ex: BC-2026-0142)
+    Checkout->>DB: Enregistre field_purchase_order_number
+
+    Checkout-->>Thomas: Etape 3 - Paiement Stripe
+    Thomas->>Checkout: Confirme paiement (cf BP-007)
+    Checkout->>Stripe: Cree et confirme PaymentIntent
+    Stripe-->>Checkout: payment_intent.succeeded
+
+    Checkout->>DB: UPDATE order (etat: processing, paid_at)
+    Checkout->>SendGrid: Email confirmation commande to Thomas
+    Checkout->>SendGrid: Email alerte nouvelle commande to Admin
+    Checkout->>Chronopost: POST /shipment/create (adresse, poids)
+    Chronopost-->>Checkout: tracking_number
+    Checkout->>DB: Enregistre tracking_number sur la commande
+    Checkout-->>Thomas: Page confirmation (N commande + tracking)
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">🛒 Checkout Flow — 3 étapes</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-num">Étape 1</div><div class="step-desc">Adresse de livraison</div><div class="step-tech">Commerce built-in shipping pane</div></div>
+          <div class="step-item back"><div class="step-num">Étape 2</div><div class="step-desc">N° Bon de Commande (champ custom obligatoire)</div><div class="step-tech">PurchaseOrderPane extends CheckoutPaneBase</div></div>
+          <div class="step-item ext"><div class="step-num">Étape 3</div><div class="step-desc">Paiement Stripe (voir BP-007)</div><div class="step-tech">commerce_stripe + Stripe.js</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚠️ Pain point identifié</div>
+        <div class="side-panel-body">
+          <div class="step-item decision">
+            <div class="step-desc">N° BC découvert au checkout = friction pour Thomas (Journey Map)</div>
+            <div class="step-tech">Opportunité : pré-remplir depuis dernière commande (US-010)</div>
+          </div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">📦 États commande</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-tech">draft → pending → processing → shipped → completed</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-007 — FLUX PAIEMENT STRIPE                                -->
+<!-- ============================================================ -->
+<div id="bp007" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-007 — Flux Paiement Stripe (US-010)</h2>
+      <div class="diag-sub">Stripe.js (front) → PaymentIntent (back) → Webhook asynchrone → statut commande</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-010</div>
+    <div class="chip actor">👤 Thomas Mercier</div>
+    <div class="chip drupal">⚙️ commerce_stripe · Stripe PHP SDK · Webhook handler</div>
+    <div class="chip ext" style="background:#dcfce7;border-color:#16a34a;color:#166534;">🔌 Stripe API</div>
+    <div class="chip">🗓 Sprint 2</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">
+        Pattern <strong>PaymentIntent</strong> de Stripe : le secret est créé côté serveur, transmis au navigateur, Stripe.js prend en charge la saisie CB de façon sécurisée (PCI DSS). La confirmation de paiement arrive via <strong>webhook HMAC</strong> (asynchrone), évitant les doublons en cas de réseau instable.
+      </div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Diagramme de séquence — PaymentIntent + Webhook Stripe</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+sequenceDiagram
+    participant Browser as Navigateur (Stripe.js)
+    participant Drupal as Drupal Backend
+    participant StripeSDK as Stripe PHP SDK
+    participant StripeAPI as Stripe API (externe)
+    participant Webhook as Webhook Handler Drupal
+    participant DB as MySQL
+
+    Browser->>Drupal: POST /checkout/etape-paiement (order_id, montant)
+    Drupal->>StripeSDK: PaymentIntent::create(amount, currency=EUR, metadata)
+    StripeSDK->>StripeAPI: POST /v1/payment_intents
+    StripeAPI-->>StripeSDK: pi_xxx (id + client_secret)
+    StripeSDK-->>Drupal: PaymentIntent object
+    Drupal-->>Browser: Page Stripe Elements + client_secret (token)
+
+    Note over Browser: Stripe.js monte formulaire CB securise (PCI DSS - hors scope Drupal)
+
+    Browser->>StripeAPI: stripe.confirmCardPayment(client_secret, card_data)
+
+    alt Carte necessite 3D Secure
+        StripeAPI-->>Browser: Redirect 3DS (iframe banque)
+        Browser-->>StripeAPI: Authentification 3DS validee
+    end
+
+    StripeAPI-->>Browser: PaymentIntent status=succeeded
+
+    par Webhook asynchrone (fiable)
+        StripeAPI->>Webhook: POST /stripe/webhook (payment_intent.succeeded)
+        Webhook->>Webhook: Verifie signature HMAC Stripe-Signature
+        Webhook->>DB: UPDATE order SET etat=processing, stripe_pi_id=pi_xxx, paid_at=NOW()
+        Webhook-->>StripeAPI: HTTP 200 OK
+    and Confirmation synchrone (UI)
+        Browser->>Drupal: POST /checkout/complete (payment_intent_id)
+        Drupal->>DB: Verifie order deja mis a jour par webhook
+        Drupal-->>Browser: Redirect /commande/confirmation/order_id
+    end
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">🔐 Sécurité Stripe</div>
+        <div class="side-panel-body">
+          <div class="step-item ext"><div class="step-num">PCI DSS</div><div class="step-desc">CB jamais transmise à Drupal — Stripe.js only</div></div>
+          <div class="step-item back"><div class="step-num">Webhook HMAC</div><div class="step-desc">Signature vérifiée (Stripe-Signature header)</div></div>
+          <div class="step-item back"><div class="step-num">Idempotence</div><div class="step-desc">Webhook ≥ 1 fois → vérif avant UPDATE</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Config Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">commerce_stripe.settings.yml</div><div class="step-desc">stripe_publishable_key, stripe_secret_key</div></div>
+          <div class="step-item back"><div class="step-tech">Route: /stripe/webhook</div><div class="step-desc">StripeWebhookController::handle()</div></div>
+          <div class="step-item back"><div class="step-tech">Événement Stripe écouté</div><div class="step-desc">payment_intent.succeeded</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">🔗 SPIKE Stripe</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-desc">Choix validé Sprint 1 (SPIKE 1j)</div><div class="step-tech">commerce_stripe v8.x-1.x module contrib</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-008 — FLUX EMAILS TRANSACTIONNELS SENDGRID                -->
+<!-- ============================================================ -->
+<div id="bp008" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-008 — Flux Emails Transactionnels SendGrid</h2>
+      <div class="diag-sub">Tous les déclencheurs Drupal → templates SendGrid → destinataires</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-005</div>
+    <div class="chip us">US-007</div>
+    <div class="chip us">US-011</div>
+    <div class="chip us">US-014</div>
+    <div class="chip ext" style="background:#dcfce7;border-color:#16a34a;color:#166534;">🔌 SendGrid REST API v3</div>
+    <div class="chip drupal">⚙️ AccountValidationService · OrderConfirmationSubscriber · sendgrid_integration module</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">
+        <strong>6 emails transactionnels</strong> couvrant tout le cycle de vie B2B : inscription, activation/refus compte, confirmation commande (Thomas + Admin), expédition avec tracking. Tous routés via SendGrid Dynamic Templates (variables injectées par Drupal).
+      </div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Flowchart — Déclencheurs → Templates → Destinataires</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+flowchart LR
+    subgraph Triggers["Declencheurs Drupal"]
+        T1["hook_user_insert\nInscription recue"]
+        T2["AccountValidationService\nCompte approuve"]
+        T3["AccountValidationService\nCompte refuse"]
+        T4["OrderConfirmationSubscriber\nCommande confirmee"]
+        T5["OrderConfirmationSubscriber\nAlerte admin commande"]
+        T6["OrderShippedSubscriber\nExpedition creee"]
+    end
+
+    subgraph SendGrid["SendGrid Dynamic Templates"]
+        API["SendGrid REST API v3\nPOST /mail/send"]
+        TPL1["Template\nconfirmation-inscription\nVariables: prenom, email, delai_validation"]
+        TPL2["Template\ncompte-active\nVariables: prenom, lien_connexion"]
+        TPL3["Template\ncompte-refuse\nVariables: prenom, contact_Company-Test"]
+        TPL4["Template\nconfirmation-commande\nVariables: num_commande, detail, total, bc"]
+        TPL5["Template\nalerte-admin-commande\nVariables: num_commande, acheteur, montant"]
+        TPL6["Template\nexpedition-tracking\nVariables: num_commande, tracking, transporteur"]
+    end
+
+    subgraph Destinataires["Destinataires"]
+        Thomas["Thomas\nAcheteur B2B"]
+        Admin["Admin Company-Test\nADV Isabelle"]
+    end
+
+    T1 --> API
+    T2 --> API
+    T3 --> API
+    T4 --> API
+    T5 --> API
+    T6 --> API
+
+    API --> TPL1 --> Thomas
+    API --> TPL2 --> Thomas
+    API --> TPL3 --> Thomas
+    API --> TPL4 --> Thomas
+    API --> TPL5 --> Admin
+    API --> TPL6 --> Thomas
+
+    classDef trigger fill:#eff6ff,stroke:#2563eb,color:#1e3a8a
+    classDef api fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef tpl fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef thomas fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef admin fill:#ede9fe,stroke:#7c3aed,color:#3b0764
+
+    class T1,T2,T3,T4,T5,T6 trigger
+    class API api
+    class TPL1,TPL2,TPL3,TPL4,TPL5,TPL6 tpl
+    class Thomas thomas
+    class Admin admin
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">📧 Tableau des 6 emails</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-num">E-01 — Inscription reçue</div><div class="step-desc">Thomas · Délai 24h · Lien contact</div></div>
+          <div class="step-item"><div class="step-num">E-02 — Alerte admin</div><div class="step-desc">Admin · Lien back-office dossier</div></div>
+          <div class="step-item ext"><div class="step-num">E-03 — Compte activé</div><div class="step-desc">Thomas · Lien connexion directe</div></div>
+          <div class="step-item decision"><div class="step-num">E-04 — Compte refusé</div><div class="step-desc">Thomas · Contact Company-Test</div></div>
+          <div class="step-item ext"><div class="step-num">E-05 — Confirmation commande</div><div class="step-desc">Thomas · Détail + N° BC + total HT</div></div>
+          <div class="step-item ext"><div class="step-num">E-06 — Expédition + tracking</div><div class="step-desc">Thomas · Numéro suivi Chronopost</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Config Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">sendgrid_integration module</div><div class="step-desc">Remplace MailManager Drupal par SendGrid</div></div>
+          <div class="step-item back"><div class="step-tech">Company-Test_b2b.settings.yml</div><div class="step-desc">template_ids[], api_key, from_email</div></div>
+          <div class="step-item back"><div class="step-tech">Dynamic Templates</div><div class="step-desc">Variables injectées via personalizations[]</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-009 — FLUX PAIEMENT 3D SECURE (US-016 — SPRINT 3)        -->
+<!-- ============================================================ -->
+<div id="bp009" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-009 — Flux Paiement 3D Secure complet (US-016)</h2>
+      <div class="diag-sub">Stripe.js → PaymentIntent → 3DS banque émettrice → Webhook idempotent → Order processing</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-016</div>
+    <div class="chip actor">👤 Thomas Mercier</div>
+    <div class="chip drupal">⚙️ StripePaymentGateway · WebhookController · StripeIdempotenceService (Redis)</div>
+    <div class="chip ext" style="background:#dcfce7;border-color:#16a34a;color:#166534;">🔌 Stripe API + 3DS</div>
+    <div class="chip">🗓 Sprint 3</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">Flux 3DS complet : <strong>PaymentIntent</strong> créé côté serveur → <strong>Stripe.js confirmCardPayment</strong> côté navigateur → si la banque exige le 3DS, redirection iframe transparente → confirmation via <strong>webhook HMAC signé</strong>. L'idempotence est garantie par un verrou Redis sur le <code>payment_intent_id</code>.</div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Sequence — 3D Secure + Webhook idempotent</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+sequenceDiagram
+    actor Thomas as Thomas (Acheteur B2B)
+    participant JS as Navigateur Stripe.js
+    participant Drupal as Drupal Backend
+    participant SDK as Stripe PHP SDK
+    participant StripeAPI as Stripe API
+    participant Bank3DS as Banque Emettrice (3DS)
+    participant Webhook as WebhookController
+    participant Redis as Redis (idempotence)
+    participant DB as MySQL
+
+    Thomas->>JS: Saisit les donnees CB dans Stripe Elements
+    JS->>Drupal: POST /checkout/payment (order_id, montant HT+TVA)
+    Drupal->>SDK: PaymentIntent::create(amount, currency=EUR, metadata)
+    SDK->>StripeAPI: POST /v1/payment_intents
+    StripeAPI-->>SDK: pi_xxx (client_secret)
+    SDK-->>Drupal: PaymentIntent object
+    Drupal-->>JS: client_secret transmis au template Twig
+
+    JS->>StripeAPI: stripe.confirmCardPayment(client_secret, card_element)
+    StripeAPI->>StripeAPI: Analyse risque frictionless flow
+
+    alt Authentification 3DS requise par la banque
+        StripeAPI-->>JS: Redirect vers iframe 3DS
+        JS->>Bank3DS: Affiche fenetre authentification banque
+        Thomas->>Bank3DS: Valide via OTP SMS ou app bancaire
+        Bank3DS-->>StripeAPI: Challenge complete - authentification OK
+    else Frictionless (aucun challenge)
+        StripeAPI-->>JS: Authentifie sans interaction
+    end
+
+    StripeAPI-->>JS: PaymentIntent status=succeeded
+    JS->>Drupal: POST /checkout/complete (pi_id)
+
+    par Webhook asynchrone (source de verite)
+        StripeAPI->>Webhook: POST /stripe/webhook (payment_intent.succeeded)
+        Webhook->>Webhook: Verifie Stripe-Signature HMAC SHA256
+        Webhook->>Redis: Verif cle idempotence pi_xxx deja traite ?
+        alt Deja traite (retry Stripe)
+            Redis-->>Webhook: CLE EXISTE - skip
+            Webhook-->>StripeAPI: HTTP 200 OK (idempotent)
+        else Premier traitement
+            Redis->>Redis: SET pi_xxx TTL 86400s
+            Webhook->>DB: UPDATE order SET etat=processing, stripe_pi_id, paid_at=NOW()
+            Webhook-->>StripeAPI: HTTP 200 OK
+        end
+    and Confirmation synchrone (UX)
+        Drupal->>DB: Verifie statut order
+        Drupal-->>JS: Redirect /commande/confirmation/order_id
+        JS-->>Thomas: Page confirmation commande
+    end
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">🔐 Sécurité 3DS / PCI DSS</div>
+        <div class="side-panel-body">
+          <div class="step-item ext"><div class="step-num">PCI DSS scope</div><div class="step-desc">Données CB jamais vues par Drupal — Stripe.js only</div></div>
+          <div class="step-item back"><div class="step-num">HMAC Webhook</div><div class="step-tech">Stripe-Signature header vérifié via SDK</div></div>
+          <div class="step-item back"><div class="step-num">Idempotence Redis</div><div class="step-desc">Évite double-débit si webhook reçu 2 fois</div></div>
+          <div class="step-item ext"><div class="step-num">3DS frictionless</div><div class="step-desc">Stripe gère automatiquement si banque le permet</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Composants Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">StripePaymentGateway.php</div><div class="step-desc">Plugin Commerce Payment Gateway</div></div>
+          <div class="step-item back"><div class="step-tech">WebhookController.php</div><div class="step-desc">Route /stripe/webhook (CSRF off)</div></div>
+          <div class="step-item back"><div class="step-tech">StripeIdempotenceService.php</div><div class="step-desc">Redis SET/GET pi_xxx</div></div>
+          <div class="step-item back"><div class="step-tech">commerce_stripe.settings.yml</div><div class="step-desc">publishable_key, secret_key, webhook_secret</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">🔗 Lié à</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-desc">BP-007 — Flux Stripe basique (Sprint 2)</div></div>
+          <div class="step-item"><div class="step-desc">BP-006 — Commande complète (contexte)</div></div>
+          <div class="step-item"><div class="step-desc">BP-010 — Facture PDF (déclenchée après)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-010 — FLUX GÉNÉRATION FACTURE PDF (US-018 — SPRINT 3)     -->
+<!-- ============================================================ -->
+<div id="bp010" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-010 — Flux Génération Facture PDF (US-018)</h2>
+      <div class="diag-sub">OrderCompleteEvent → InvoiceGeneratorService → mPDF → SendGrid (pièce jointe) → espace commande</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-018</div>
+    <div class="chip actor">👤 Thomas Mercier</div>
+    <div class="chip drupal">⚙️ InvoiceGeneratorService · InvoiceNumberingService · mPDF · OrderCompleteSubscriber</div>
+    <div class="chip ext" style="background:#dcfce7;border-color:#16a34a;color:#166534;">🔌 SendGrid (pièce jointe)</div>
+    <div class="chip">🗓 Sprint 3</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">Déclenchée automatiquement à la <strong>confirmation de paiement</strong> (OrderCompleteEvent) : numérotation séquentielle thread-safe <code>INV-2026-NNNN</code> via verrou DB, rendu PDF par <strong>mPDF + template Twig A4</strong>, envoi par SendGrid avec PDF en pièce jointe, et mise à disposition dans l'espace commande de Thomas.</div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Sequence — Génération facture PDF + envoi email</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+sequenceDiagram
+    participant OrderEvt as OrderCompleteEvent
+    participant Sub as OrderCompleteSubscriber
+    participant InvSvc as InvoiceGeneratorService
+    participant NumSvc as InvoiceNumberingService
+    participant DB as MySQL
+    participant Twig as Twig Template (facture-a4.html.twig)
+    participant mPDF as mPDF Library
+    participant FS as Filesystem (private://)
+    participant SendGrid as SendGrid API
+    actor Thomas as Thomas (Acheteur B2B)
+
+    OrderEvt->>Sub: onOrderComplete(order)
+    Sub->>InvSvc: generateInvoice(order)
+    InvSvc->>NumSvc: getNextInvoiceNumber(year=2026)
+    NumSvc->>DB: SELECT invoice_counter FOR UPDATE (verrou exclusif)
+    DB-->>NumSvc: counter = 41
+    NumSvc->>DB: UPDATE invoice_counter SET value=42
+    NumSvc->>DB: COMMIT (relache verrou)
+    NumSvc-->>InvSvc: INV-2026-0041
+
+    InvSvc->>DB: Charge order items, acheteur, adresse, TVA 20pct
+    DB-->>InvSvc: Donnees completes commande
+    InvSvc->>Twig: render(facture-a4.html.twig, data)
+    Twig-->>InvSvc: HTML facture rendu (logo, lignes, totaux, mentions legales)
+    InvSvc->>mPDF: writeHTML(html) + Output(RETURN_STRING)
+    mPDF-->>InvSvc: PDF binaire (string)
+    InvSvc->>FS: file_save_data(pdf, private://invoices/INV-2026-0041.pdf)
+    FS-->>InvSvc: File entity (fid)
+    InvSvc->>DB: UPDATE order SET field_invoice_file=fid, field_invoice_number=INV-2026-0041
+    DB-->>InvSvc: OK
+
+    InvSvc->>SendGrid: POST /mail/send (template facture, to Thomas, attachment PDF base64)
+    SendGrid-->>InvSvc: 202 Accepted
+    SendGrid-->>Thomas: Email avec facture PDF en piece jointe
+
+    Note over Thomas: Thomas peut aussi telecharger depuis /mon-compte/commandes
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">📄 Contenu facture obligatoire</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-num">En-tête</div><div class="step-desc">Logo Company-Test · SIRET · adresse · RCS</div></div>
+          <div class="step-item"><div class="step-num">Destinataire</div><div class="step-desc">Raison sociale · SIRET · adresse livraison</div></div>
+          <div class="step-item"><div class="step-num">Numérotation</div><div class="step-tech">INV-YYYY-NNNN (séquentiel, thread-safe)</div></div>
+          <div class="step-item back"><div class="step-num">Lignes produit</div><div class="step-desc">Référence · désignation · qté · PU HT · total HT</div></div>
+          <div class="step-item back"><div class="step-num">TVA</div><div class="step-desc">Base HT · TVA 20% · Total TTC</div></div>
+          <div class="step-item ext"><div class="step-num">Mentions légales</div><div class="step-desc">Art. 289 CGI · mentions pénalités retard</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Composants Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">InvoiceGeneratorService.php</div></div>
+          <div class="step-item back"><div class="step-tech">InvoiceNumberingService.php</div><div class="step-desc">Verrou DB pour thread-safety</div></div>
+          <div class="step-item back"><div class="step-tech">templates/facture-a4.html.twig</div></div>
+          <div class="step-item back"><div class="step-tech">mPDF (composer require mpdf/mpdf)</div></div>
+          <div class="step-item back"><div class="step-desc">Stockage : private:// (non public)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-011 — FLUX HISTORIQUE COMMANDES ACHETEUR (US-012 — S3)    -->
+<!-- ============================================================ -->
+<div id="bp011" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-011 — Flux Historique Commandes Acheteur (US-012)</h2>
+      <div class="diag-sub">Espace "Mes commandes" — Views filtrées · isolation par uid · détail + facture + tracking</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-012</div>
+    <div class="chip actor">👤 Thomas Mercier (b2b_buyer)</div>
+    <div class="chip drupal">⚙️ Views contextual filter uid · OrderHistoryController · Redis cache</div>
+    <div class="chip">🗓 Sprint 3</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">L'historique est rendu par une <strong>Views Drupal Commerce</strong> avec <strong>contextual filter uid</strong> garantissant l'isolation des données : Thomas ne voit que ses commandes. Les filtres exposés (statut, date) et le tri sont gérés côté Views. Le détail charge le Controller custom pour afficher la timeline, la facture et le tracking.</div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Flowchart — Historique commandes + isolation données</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+flowchart TD
+    A([Thomas accede /mon-compte/commandes]) --> B{Utilisateur\nauthentifie b2b_buyer ?}
+    B -->|Non| C[Redirect /user/login]
+    B -->|Oui| D[Views: commerce_order_history\nContextual filter: uid = current_user]
+    D --> E{Filtres actifs ?}
+    E -->|Aucun filtre| F[Charge toutes commandes de Thomas\nTriees par date DESC]
+    E -->|Filtre statut| G[WHERE order.state = filtre_statut]
+    E -->|Filtre date| H[WHERE order.placed BETWEEN date_from AND date_to]
+    G --> F
+    H --> F
+    F --> I{Cache Redis\nhit ?}
+    I -->|Oui TTL valide| J[Retourne HTML cache]
+    I -->|Non| K[SELECT orders WHERE uid=Thomas\nJOIN order_items, products]
+    K --> L[Redis SET cache TTL 120s]
+    L --> J
+    J --> M[Affiche liste commandes\nN commande, date, montant, statut badge, N BC]
+    M --> N{Thomas clique\nsur une commande}
+    N --> O[OrderHistoryController::detail order_id]
+    O --> P{order.uid == current_user.uid ?}
+    P -->|Non| Q[403 Access Denied]
+    P -->|Oui| R[Charge order + items + timeline statuts]
+    R --> S[Affiche detail commande\nTimeline, lignes produit, adresse]
+    S --> T{Facture disponible ?}
+    T -->|Oui| U[Lien telecharger INV-2026-NNNN.pdf]
+    T -->|Non - traitement| V[Mention En cours de generation]
+    S --> W{Tracking disponible ?}
+    W -->|Oui| X[Lien suivi transporteur cliquable]
+    W -->|Non| Y[Mention Expedition en cours]
+
+    classDef security fill:#fef2f2,stroke:#dc2626,color:#991b1b
+    classDef success fill:#f0fdf4,stroke:#16a34a,color:#14532d
+    classDef info fill:#eff6ff,stroke:#2563eb,color:#1e3a8a
+    classDef cache fill:#fef9c3,stroke:#ca8a04,color:#713f12
+
+    class B,P security
+    class C,Q security
+    class U,X success
+    class D,O,R,S info
+    class I,J,K,L cache
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">🔒 Isolation données (sécurité)</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-num">Contextual filter uid</div><div class="step-desc">Views filtre automatiquement sur l'utilisateur connecté</div></div>
+          <div class="step-item back"><div class="step-num">Double check Controller</div><div class="step-desc">order.uid === current_user.uid avant affichage détail</div></div>
+          <div class="step-item"><div class="step-num">Access Denied 403</div><div class="step-desc">Si Thomas tente d'accéder à la commande d'un autre</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Composants Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">views.view.order_history.yml</div><div class="step-desc">Contextual filter + exposed filters</div></div>
+          <div class="step-item back"><div class="step-tech">OrderHistoryController.php</div><div class="step-desc">Route /mon-compte/commandes/{order_id}</div></div>
+          <div class="step-item back"><div class="step-tech">order-row.html.twig</div><div class="step-desc">Template ligne commande avec badges</div></div>
+          <div class="step-item back"><div class="step-tech">Redis TTL 120s</div><div class="step-desc">Cache liste (invalidé si nouvelle commande)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-012 — FLUX CALCUL FRAIS LIVRAISON (US-019 — SPRINT 4)     -->
+<!-- ============================================================ -->
+<div id="bp012" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-012 — Flux Calcul Frais Livraison Automatique (US-019)</h2>
+      <div class="diag-sub">Checkout étape adresse → ShippingRateCalculatorService → API Chronopost/Colissimo → Redis cache → options tarifées</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-019</div>
+    <div class="chip actor">👤 Thomas Mercier</div>
+    <div class="chip drupal">⚙️ ShippingRateCalculatorService · ChronopostApiClient · Redis TTL 3600s · Commerce Shipping</div>
+    <div class="chip ext" style="background:#dcfce7;border-color:#16a34a;color:#166534;">🔌 Chronopost API · Colissimo API</div>
+    <div class="chip">🗓 Sprint 4</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">Le calcul des frais utilise un <strong>cache Redis (TTL 3600s)</strong> sur la clé <code>shipping_rate:{cp}:{poids}</code> pour éviter des appels API répétés. En cas de miss, l'API Chronopost est interrogée. Un <strong>fallback sur une grille locale</strong> garantit l'affichage même si l'API est indisponible.</div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Sequence — Calcul frais livraison avec cache Redis</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+sequenceDiagram
+    actor Thomas as Thomas (B2B connecte)
+    participant Checkout as Checkout Etape 1 (Adresse)
+    participant ShipSvc as ShippingRateCalculatorService
+    participant Redis as Redis Cache
+    participant ChronoAPI as ChronopostApiClient
+    participant ColisAPI as ColissimoApiClient
+    participant FallbackGrid as Grille locale (YAML config)
+    participant DB as MySQL (Commerce Order)
+
+    Thomas->>Checkout: Saisit adresse livraison (CP: 69006, Lyon)
+    Checkout->>ShipSvc: getRates(cp=69006, poids=12.5kg, dimensions)
+    ShipSvc->>Redis: GET shipping_rate:69006:12.5
+    alt Cache hit (TTL non expire)
+        Redis-->>ShipSvc: Tarifs cached (Chrono 13H 8.90 EUR, Colissimo 5.40 EUR)
+    else Cache miss
+        ShipSvc->>ChronoAPI: POST /rates (cp_dest, poids, service=13H)
+        alt API Chronopost disponible
+            ChronoAPI-->>ShipSvc: tarif=8.90 EUR, delai=J+1 avant 13h
+        else API Chronopost indisponible (timeout/erreur)
+            ChronoAPI-->>ShipSvc: Exception / Timeout
+            ShipSvc->>FallbackGrid: getLocalRate(cp_zone=ZoneA, poids=12.5)
+            FallbackGrid-->>ShipSvc: tarif=9.50 EUR (grille locale majoration)
+        end
+        ShipSvc->>ColisAPI: POST /rates (cp_dest, poids)
+        ColisAPI-->>ShipSvc: tarif=5.40 EUR, delai=J+2
+        ShipSvc->>Redis: SET shipping_rate:69006:12.5 TTL=3600s
+    end
+
+    ShipSvc-->>Checkout: Options livraison avec tarifs HT
+    Checkout-->>Thomas: Affiche 2 options\nChronoChrono 13H - 8.90 EUR HT J+1\nColissimo Standard - 5.40 EUR HT J+2
+    Thomas->>Checkout: Selectionne Chronopost 13H
+    Checkout->>DB: UPDATE order SET shipping_method=chrono13h, shipping_amount=8.90
+    Checkout-->>Thomas: Total commande mis a jour (sous-total + livraison + TVA)
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">⚡ Stratégie cache + fallback</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-num">Clé Redis</div><div class="step-tech">shipping_rate:{cp}:{poids_arrondi}</div></div>
+          <div class="step-item back"><div class="step-num">TTL</div><div class="step-desc">3600s — tarifs transporteurs stables à la journée</div></div>
+          <div class="step-item decision"><div class="step-num">Fallback</div><div class="step-desc">Grille YAML locale si API down — majoration +10%</div></div>
+          <div class="step-item"><div class="step-num">Zones CP</div><div class="step-desc">75xxx Paris, 69xxx Lyon, DOM-TOM tarifs spéciaux</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Composants Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">ShippingRateCalculatorService.php</div></div>
+          <div class="step-item back"><div class="step-tech">ChronopostApiClient.php</div></div>
+          <div class="step-item back"><div class="step-tech">ChronopostShippingMethod.php</div><div class="step-desc">Plugin Commerce Shipping</div></div>
+          <div class="step-item back"><div class="step-tech">shipping_rates.yml (fallback)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-013 — FLUX TRACKING TRANSPORTEUR (US-021 — SPRINT 4)      -->
+<!-- ============================================================ -->
+<div id="bp013" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-013 — Flux Tracking Transporteur (US-021)</h2>
+      <div class="diag-sub">Admin saisit N° suivi → OrderShippedSubscriber → SendGrid email + lien tracking → espace commande Thomas</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-021</div>
+    <div class="chip actor">👤 Isabelle Royer (Admin) + Thomas Mercier</div>
+    <div class="chip drupal">⚙️ OrderShippedSubscriber · field_tracking_number · field_tracking_carrier · SendGrid</div>
+    <div class="chip">🗓 Sprint 4</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">L'admin Isabelle saisit le numéro de suivi dans le back-office et change le statut à <strong>Expédié</strong>. L'<strong>OrderShippedSubscriber</strong> construit automatiquement le lien de tracking selon le transporteur (Chronopost ou Colissimo), envoie l'email SendGrid à Thomas, et met à jour l'espace commande.</div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Flowchart — Tracking expédition + notification client</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+flowchart TD
+    ADMIN([Admin Isabelle accede\nback-office commande]) --> DETAIL[Ouvre detail commande\netat: processing]
+    DETAIL --> FORM[Formulaire changement statut\nSelect: Expedie\nChamp: N tracking obligatoire *\nSelect: Transporteur Chronopost / Colissimo]
+    FORM --> VALIDATE{N tracking\nrenseigne ?}
+    VALIDATE -->|Non| ERROR[Erreur: Le numero de suivi est\nobligatoire pour expedier]
+    VALIDATE -->|Oui| SAVE[Enregistre order\nfield_tracking_number = 8Z123456789\nfield_tracking_carrier = chronopost\norder.state = shipped]
+    SAVE --> SUBSCRIBER[OrderShippedSubscriber\ndeclenche OrderTransitionEvent]
+    SUBSCRIBER --> BUILD_URL{Construit URL tracking\nselon transporteur}
+    BUILD_URL -->|Chronopost| URL_CHRONO[https://www.chronopost.fr/tracking#?code=8Z123456789]
+    BUILD_URL -->|Colissimo| URL_COLIS[https://www.laposte.fr/outils/suivre-vos-envois?code=XXXXXXXX]
+    URL_CHRONO --> SENDGRID[SendGrid: template expedition-tracking\nVars: num_commande, tracking, url, transporteur, delai]
+    URL_COLIS --> SENDGRID
+    SENDGRID --> EMAIL([Thomas recoit email\nVotre commande est en route - Suivi: lien cliquable])
+    SAVE --> UPDATE_UI[Mise a jour espace commande\nBadge: Expedie\nTimeline: etape Expedition activee\nBouton: Suivre mon colis cliquable]
+    UPDATE_UI --> THOMAS_UI([Thomas voit le statut updated\ndans /mon-compte/commandes])
+
+    classDef admin fill:#ede9fe,stroke:#7c3aed,color:#3b0764
+    classDef thomas fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef success fill:#f0fdf4,stroke:#16a34a,color:#14532d
+    classDef danger fill:#fef2f2,stroke:#dc2626,color:#991b1b
+    classDef ext fill:#dcfce7,stroke:#16a34a,color:#14532d
+
+    class ADMIN,DETAIL,FORM,SAVE admin
+    class EMAIL,THOMAS_UI,UPDATE_UI thomas
+    class SUBSCRIBER,BUILD_URL,URL_CHRONO,URL_COLIS,SENDGRID ext
+    class VALIDATE,ERROR danger
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">📦 URLs tracking par transporteur</div>
+        <div class="side-panel-body">
+          <div class="step-item ext"><div class="step-num">Chronopost</div><div class="step-tech">chronopost.fr/tracking#?code={num}</div></div>
+          <div class="step-item ext"><div class="step-num">Colissimo</div><div class="step-tech">laposte.fr/outils/suivre-vos-envois?code={num}</div></div>
+          <div class="step-item back"><div class="step-num">Config Drupal</div><div class="step-tech">Company-Test_b2b.settings.yml: tracking_url_templates</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Composants Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">OrderShippedSubscriber.php</div></div>
+          <div class="step-item back"><div class="step-tech">field_tracking_number (String)</div></div>
+          <div class="step-item back"><div class="step-tech">field_tracking_carrier (List/Select)</div></div>
+          <div class="step-item ext"><div class="step-tech">SendGrid template: expedition-tracking</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-014 — FLUX FILTRES CATALOGUE AVANCÉS (US-003 — SPRINT 4)  -->
+<!-- ============================================================ -->
+<div id="bp014" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-014 — Flux Filtres Catalogue Avancés (US-003)</h2>
+      <div class="diag-sub">AJAX Views refresh · deep-linking URL · chips filtres actifs · Redis cache invalidation</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-003</div>
+    <div class="chip actor">👤 Thomas Mercier</div>
+    <div class="chip drupal">⚙️ Views AJAX · Exposed Filters · catalog-filters.js · URL query params · Redis</div>
+    <div class="chip">🗓 Sprint 4</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">Les filtres (référence, type fibre G657A1/G657A2, conditionnement) déclenchent un <strong>refresh AJAX Views</strong> sans rechargement de page. Les <strong>query params URL sont mis à jour</strong> pour permettre le deep-linking et le partage de lien. Les chips des filtres actifs sont affichés avec option de suppression individuelle.</div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Sequence — Filtres AJAX + deep-linking</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+sequenceDiagram
+    actor Thomas as Thomas (B2B connecte)
+    participant Browser as Navigateur
+    participant JS as catalog-filters.js
+    participant Router as Drupal AJAX Router
+    participant Views as Views Module (AJAX)
+    participant Redis as Redis Cache
+    participant DB as MySQL
+
+    Thomas->>Browser: Page catalogue /catalogue/cables-ftth
+    Browser->>Router: GET /catalogue/cables-ftth
+    Router->>Views: Charge vue sans filtres
+    Views->>Redis: Cache hit ?
+    Redis-->>Views: HTML cached (12 produits)
+    Views-->>Browser: Grille produits complete
+
+    Thomas->>Browser: Coche filtre type = G657A2
+    Browser->>JS: onChange(filter: type_fibre, value: G657A2)
+    JS->>Browser: history.pushState - URL = ?type=G657A2
+    JS->>Router: POST /views/ajax (view_id, filters={type_fibre: G657A2})
+    Router->>Views: Re-execute vue avec filtres
+    Views->>DB: SELECT WHERE field_type_fibre = G657A2
+    DB-->>Views: 7 produits filtres
+    Views-->>Router: HTML fragment mis a jour
+    Router-->>JS: JSON response (html, count=7)
+    JS->>Browser: Replace DOM grille + compteur (7 produits)
+    JS->>Browser: Affiche chip actif G657A2 x (supprimable)
+    Browser-->>Thomas: Grille filtree + chip + compteur mis a jour
+
+    Thomas->>Browser: Ajoute filtre conditionnement = Bobine 500m
+    Browser->>JS: onChange(filter: conditionnement, value: bobine_500m)
+    JS->>Browser: URL = ?type=G657A2&conditionnement=bobine_500m
+    JS->>Router: POST /views/ajax (filters={type: G657A2, cond: bobine_500m})
+    Router->>Views: Filtres combines
+    Views->>DB: SELECT WHERE type=G657A2 AND conditionnement=bobine_500m
+    DB-->>Views: 3 produits
+    Views-->>JS: HTML + count=3
+    JS-->>Thomas: Grille 3 produits + 2 chips actifs
+
+    Thomas->>Browser: Clique x sur chip G657A2
+    JS->>Browser: Supprime filtre type - URL = ?conditionnement=bobine_500m
+    JS->>Router: POST /views/ajax (filters={cond: bobine_500m})
+    Router->>Views: Filtre seul conditionnement
+    Views-->>Thomas: Grille recalculee + 1 seul chip actif
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">🔗 Deep-linking</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-num">URL partageable</div><div class="step-desc">/catalogue?type=G657A2&cond=bobine_500m</div></div>
+          <div class="step-item back"><div class="step-num">history.pushState</div><div class="step-desc">Mise à jour URL sans reload</div></div>
+          <div class="step-item back"><div class="step-num">Init page</div><div class="step-desc">Filtres restaurés depuis query params au chargement</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Composants Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">views.view.catalogue.yml</div><div class="step-desc">use_ajax: true + exposed filters</div></div>
+          <div class="step-item back"><div class="step-tech">catalog-filters.js</div><div class="step-desc">Chips + URL push + AJAX trigger</div></div>
+          <div class="step-item back"><div class="step-tech">Taxonomies</div><div class="step-desc">type_fibre · conditionnement (vocab Drupal)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-015 — FLUX TARIFS NÉGOCIÉS PAR CLIENT (US-008 — SPRINT 4) -->
+<!-- ============================================================ -->
+<div id="bp015" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-015 — Flux Tarifs Négociés Spécifiques par Client (US-008)</h2>
+      <div class="diag-sub">CustomerPriceSubscriber (priority +10) → field_prix_negocie sur User entity → fallback B2B standard</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-008</div>
+    <div class="chip actor">👤 Thomas Mercier (client avec tarif négocié)</div>
+    <div class="chip drupal">⚙️ CustomerPriceSubscriber · B2bPriceSubscriber · field_prix_negocie (JSON) · NegotiatedPriceAdminForm</div>
+    <div class="chip">🗓 Sprint 4</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">Le <strong>CustomerPriceSubscriber</strong> s'exécute en <strong>priorité +10</strong> sur B2bPriceSubscriber. Il lit le champ <code>field_prix_negocie</code> (JSON) stocké sur l'entité User, qui mappe des couples <code>variation_id → prix_special</code>. Si une entrée existe pour la variation demandée, elle remplace le prix B2B standard. Sinon : fallback transparent sur B2bPriceSubscriber.</div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Flowchart — Tarifs négociés + fallback B2B standard</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+flowchart TD
+    A([PriceCalculateEvent\nvariation_id=VAR-042, user=Thomas]) --> B[CustomerPriceSubscriber\nonPriceCalculate - priority +10]
+    B --> C{User a role\nb2b_buyer ?}
+    C -->|Non| STOP_ANON[stopPropagation\nprix masque anonyme]
+    C -->|Oui| D[Charge field_prix_negocie\nsur User entity de Thomas]
+    D --> E{field_prix_negocie\nJSON contient VAR-042 ?}
+
+    E -->|Oui - tarif specifique| F[Prix negocie specifique\nex: 10.20 EUR/m au lieu de 12.50]
+    F --> G[event setPrice 10.20 EUR]
+    G --> H[stopPropagation\nevite execution B2bPriceSubscriber]
+    H --> DISPLAY_NEG([Affiche 10.20 EUR/m\nBadge Votre tarif negocie])
+
+    E -->|Non - pas de tarif specifique| I[CustomerPriceSubscriber\nne modifie pas le prix]
+    I --> J[B2bPriceSubscriber\nexecute priority 0]
+    J --> K[Charge prix B2B standard\ndepuis Commerce price list]
+    K --> L[event setPrice 12.50 EUR]
+    L --> DISPLAY_STD([Affiche 12.50 EUR/m\nprix B2B standard])
+
+    ADMIN([Admin cree un tarif negocie\npour Thomas]) --> FORM[NegotiatedPriceAdminForm\nSelectionne user + variation + prix]
+    FORM --> SAVE[UPDATE user.field_prix_negocie\nJSON: VAR-042=10.20, VAR-088=8.90]
+    SAVE --> CACHE[Invalide cache utilisateur\nRedis flush user:thomas:prices]
+
+    classDef special fill:#fce7f3,stroke:#db2777,color:#831843
+    classDef standard fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef admin fill:#ede9fe,stroke:#7c3aed,color:#3b0764
+    classDef security fill:#fef2f2,stroke:#dc2626,color:#991b1b
+
+    class F,G,H,DISPLAY_NEG special
+    class I,J,K,L,DISPLAY_STD standard
+    class ADMIN,FORM,SAVE,CACHE admin
+    class STOP_ANON security
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">💰 Structure field_prix_negocie</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-num">Type champ</div><div class="step-tech">field_prix_negocie (Text long, JSON)</div></div>
+          <div class="step-item back"><div class="step-num">Format</div><div class="step-tech">{"VAR-042": 10.20, "VAR-088": 8.90}</div></div>
+          <div class="step-item back"><div class="step-num">Sur entité</div><div class="step-desc">User entity (pas le produit)</div></div>
+          <div class="step-item"><div class="step-num">Fallback</div><div class="step-desc">Si clé absente → prix B2B standard</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Composants Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">CustomerPriceSubscriber.php</div><div class="step-desc">priority: 10 (vs B2bPriceSubscriber: 0)</div></div>
+          <div class="step-item back"><div class="step-tech">NegotiatedPriceAdminForm.php</div><div class="step-desc">Interface admin saisie tarifs</div></div>
+          <div class="step-item back"><div class="step-tech">field_prix_negocie</div><div class="step-desc">JSON sur User entity</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- BP-016 — FLUX ADRESSES LIVRAISON MULTIPLES (US-020 — IP)     -->
+<!-- ============================================================ -->
+<div id="bp016" class="diagram-section">
+  <div class="diag-header">
+    <div>
+      <h2>BP-016 — Flux Adresses Livraison Multiples (US-020)</h2>
+      <div class="diag-sub">Carnet d'adresses Profile entity · sélection au checkout · adresse par défaut · ajout nouvelle adresse</div>
+    </div>
+  </div>
+  <div class="meta-row">
+    <div class="chip us">US-020</div>
+    <div class="chip actor">👤 Thomas Mercier (multi-chantiers)</div>
+    <div class="chip drupal">⚙️ Profile module · AddressBook · Commerce Checkout pane · field_default_address</div>
+    <div class="chip">🗓 IP Sprint</div>
+  </div>
+  <div class="two-col">
+    <div>
+      <div class="desc-box">Thomas gère plusieurs chantiers avec des adresses différentes. Le <strong>carnet d'adresses</strong> (Profile entity Drupal) stocke N adresses par utilisateur. Au checkout, les adresses existantes sont proposées en sélection rapide. Thomas peut ajouter une adresse à la volée et la marquer comme adresse par défaut.</div>
+      <div class="diag-card">
+        <div class="diag-card-header"><span>🔄 Flowchart — Adresses multiples au checkout</span></div>
+        <div class="diag-body">
+          <pre class="mermaid">
+flowchart TD
+    A([Thomas accede checkout\nEtape 1 - Adresse livraison]) --> B[AddressBookPane\nCharge profiles adresses de Thomas]
+    B --> C{Adresses existantes\ndans le carnet ?}
+
+    C -->|Oui - adresses connues| D[Affiche carnet adresses\nRadio buttons par adresse]
+    D --> E{Adresse par defaut\ndefinie ?}
+    E -->|Oui| F[Pre-selectionne\nadresse par defaut]
+    E -->|Non| G[Premiere adresse\npre-selectionnee]
+    F --> H[Thomas valide ou change]
+    G --> H
+    H --> SELECT[Thomas selectionne adresse\nChantier Lyon-Confluence\n14 rue du lac 69009 Lyon]
+
+    C -->|Non - premier checkout| NEW[Affiche formulaire\nnouvel adresse vide]
+    D --> ADD[Bouton Ajouter\nune nouvelle adresse]
+    ADD --> NEW
+
+    NEW --> FILL[Thomas remplit le formulaire\nNom chantier, adresse, CP, ville]
+    FILL --> SAVE_OPT{Sauvegarder\ndans le carnet ?}
+    SAVE_OPT -->|Oui case cochee| SAVE_ADDR[Profile::create\nfield_addresses += nouvelle adresse]
+    SAVE_OPT -->|Non| USE_ONCE[Adresse utilisee une fois\nnon sauvegardee]
+    SAVE_ADDR --> DEFAULT_OPT{Definir comme\nadresse par defaut ?}
+    DEFAULT_OPT -->|Oui| SET_DEFAULT[field_default_address = nouveau profile_id]
+    DEFAULT_OPT -->|Non| NO_DEFAULT[Adresse ajoutee sans defaut]
+    SET_DEFAULT --> SELECT
+    NO_DEFAULT --> SELECT
+    USE_ONCE --> SELECT
+
+    SELECT --> CONTINUE[Adresse enregistree\nsur la commande\nContinuer vers Etape 2]
+
+    classDef thomas fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    classDef action fill:#f0fdf4,stroke:#16a34a,color:#14532d
+    classDef decision fill:#fffbeb,stroke:#d97706,color:#92400e
+
+    class A,H,FILL,SELECT thomas
+    class SAVE_ADDR,SET_DEFAULT,CONTINUE action
+    class C,E,SAVE_OPT,DEFAULT_OPT decision
+          </pre>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="side-panel">
+        <div class="side-panel-header">📍 Cas d'usage Thomas</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-num">Chantier A</div><div class="step-desc">Lyon-Confluence (adresse par défaut)</div></div>
+          <div class="step-item"><div class="step-num">Chantier B</div><div class="step-desc">Villeurbanne — Nouveauté, ajoutée à la volée</div></div>
+          <div class="step-item"><div class="step-num">Siège social</div><div class="step-desc">Pour livraison matériel bureau</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">⚙️ Composants Drupal</div>
+        <div class="side-panel-body">
+          <div class="step-item back"><div class="step-tech">Profile module (contrib)</div><div class="step-desc">Entité Profile par user</div></div>
+          <div class="step-item back"><div class="step-tech">AddressBookPane.php</div><div class="step-desc">Checkout pane custom</div></div>
+          <div class="step-item back"><div class="step-tech">field_default_address</div><div class="step-desc">Reference vers profile_id par défaut</div></div>
+          <div class="step-item back"><div class="step-tech">/mon-compte/adresses</div><div class="step-desc">Gestion carnet hors checkout</div></div>
+        </div>
+      </div>
+      <div class="side-panel" style="margin-top:10px;">
+        <div class="side-panel-header">🔗 Lié à</div>
+        <div class="side-panel-body">
+          <div class="step-item"><div class="step-desc">BP-006 — Flux commande (étape 1)</div></div>
+          <div class="step-item"><div class="step-desc">BP-012 — Frais livraison (CP adresse)</div></div>
+          <div class="step-item"><div class="step-desc">BP-013 — Tracking (adresse livraison)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#dbeafe',
+      primaryTextColor: '#1e3a8a',
+      primaryBorderColor: '#2563eb',
+      lineColor: '#64748b',
+      secondaryColor: '#f1f5f9',
+      tertiaryColor: '#f8fafc',
+      fontSize: '13px'
+    },
+    flowchart: { htmlLabels: true, curve: 'basis' },
+    sequence: { diagramMarginX: 20, diagramMarginY: 10, actorMargin: 50, messageMargin: 40 }
+  });
+
+  function showTab(id, btn) {
+    document.querySelectorAll('.diagram-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
