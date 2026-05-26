@@ -40,7 +40,7 @@
 | Couverture BDD Gherkin | 22/23 US (US-017 → Phase 2) |
 | Cas de test | **84 TC** (FEAT-001 à 007) |
 | Scénarios BDD | **~119 scénarios** |
-| Wireframes lo-fi | **19 WF** (S1→S4 + IP) |
+| Wireframes lo-fi | **21 WF** (S1→S4 + IP) |
 | Process diagrams | **8 flux** (BP-001 à BP-008) |
 | Bugs critiques prod | **0** |
 | Bugs majeurs résolus | 2 (incident 3DS Visa · grille tarifaire S4) |
@@ -81,7 +81,7 @@ Project_test__ecommerce_b2b/
 └── 04_ux_design/                ← Personas · Journey Map · Wireframes · Design Handoff
     ├── personas/                ← persona_acheteur_b2b.md (Thomas Mercier + Isabelle Royer)
     ├── journey_map/             ← journey_map_acheteur_b2b.md (7 phases · courbe émotion)
-    ├── wireframes/              ← 19 WF lo-fi ASCII (sprint_01 à sprint_ip)
+    ├── wireframes/              ← 21 WF lo-fi ASCII (sprint_01 à sprint_ip)
     └── design_handoff/          ← wireframes_sprint_01/04.html (rendu visuel navigateur)
 ```
 
@@ -99,13 +99,13 @@ Project_test__ecommerce_b2b/
 
 > ² US-017 — Paiement différé 30j fin de mois : complexité juridique → reporté en Phase 2
 
-## Points de qualité
+## Points de qualité — Résolus ✅
 
-| # | Constat | Impact | Décision |
-|---|---------|--------|----------|
-| Q1 | `bdd_gherkin/US-017.feature` absent | Couverture BDD réelle : 22/23 | US-017 hors scope V1 — Phase 2 |
-| Q2 | Design Handoff S2 et S3 HTML : statut non finalisé | `wireframes_sprint_02.html` et `_03.html` générés mais incomplets | À compléter si démonstration |
-| Q3 | Numéros WF-004, WF-011, WF-017 non utilisés | Numérotation non contiguë | Numéros réservés ou abandonnés en cours de PI |
+| # | Constat initial | Correction appliquée |
+|---|----------------|----------------------|
+| Q1 | `bdd_gherkin/US-017.feature` absent | Fichier créé — spec Phase 2 taggée `@phase2 @hors-scope-v1` |
+| Q2 | Design Handoff S2/S3 HTML statut 🔲 | Statut mis à jour ✅ — fichiers HTML avec contenu vérifié |
+| Q3 | WF-004, WF-011, WF-017 manquants | 3 wireframes créés : fiche technique PDF · confirmation commande · succès paiement 3DS |
 
 ## Activation des agents
 

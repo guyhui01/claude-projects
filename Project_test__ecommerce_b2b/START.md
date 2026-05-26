@@ -218,7 +218,7 @@ Project_test__ecommerce_b2b/
 | BDD US-014 | `bdd_gherkin/US-014.feature` | Statut + notif | 6 | ✅ |
 | BDD US-015 | `bdd_gherkin/US-015.feature` | Export CSV | 6 | ✅ |
 | BDD US-016 | `bdd_gherkin/US-016.feature` | Paiement 3DS Stripe | 6 | ✅ |
-| ~~BDD US-017~~ | ~~`bdd_gherkin/US-017.feature`~~ | ~~Paiement différé 30j~~ | — | 🔲 Phase 2 |
+| BDD US-017 | `bdd_gherkin/US-017.feature` | Paiement différé 30j | 5 | 📋 Phase 2 spec |
 | BDD US-018 | `bdd_gherkin/US-018.feature` | Facture PDF | 5 | ✅ |
 | BDD US-019 | `bdd_gherkin/US-019.feature` | Frais livraison | 5 | ✅ |
 | BDD US-020 | `bdd_gherkin/US-020.feature` | Adresses multiples | 6 | ✅ |
@@ -265,20 +265,23 @@ Project_test__ecommerce_b2b/
 | WF-007 Validation compte admin | `wireframes/sprint_02/WF-007_validation_compte_admin.md` | S2 | ✅ |
 | WF-009 Panier B2B | `wireframes/sprint_02/WF-009_panier_b2b.md` | S2 | ✅ |
 | WF-010 Checkout 3 étapes | `wireframes/sprint_02/WF-010_checkout_commande.md` | S2 | ✅ |
+| WF-011 Confirmation commande | `wireframes/sprint_02/WF-011_confirmation_commande.md` | S2 | ✅ |
 | WF-013 Dashboard back-office | `wireframes/sprint_02/WF-013_dashboard_backoffice.md` | S2 | ✅ |
 | WF-014 Suivi commande | `wireframes/sprint_02/WF-014_suivi_commande.md` | S2 | ✅ |
 | WF-012 Historique commandes | `wireframes/sprint_03/WF-012_historique_commandes.md` | S3 | ✅ |
 | WF-015 Export CSV back-office | `wireframes/sprint_03/WF-015_export_csv_backoffice.md` | S3 | ✅ |
 | WF-016 Paiement Stripe 3DS | `wireframes/sprint_03/WF-016_paiement_stripe_3ds.md` | S3 | ✅ |
+| WF-017 Succès paiement 3DS | `wireframes/sprint_03/WF-017_succes_paiement.md` | S3 | ✅ |
 | WF-018 Facture PDF | `wireframes/sprint_03/WF-018_facture_pdf.md` | S3 | ✅ |
 | WF-003 Filtres catalogue AJAX | `wireframes/sprint_04/WF-003_filtres_catalogue.md` | S4 | ✅ |
 | WF-008 Tarifs négociés | `wireframes/sprint_04/WF-008_tarifs_negocies.md` | S4 | ✅ |
 | WF-019 Frais livraison | `wireframes/sprint_04/WF-019_frais_livraison.md` | S4 | ✅ |
 | WF-021 Suivi transporteur | `wireframes/sprint_04/WF-021_suivi_transporteur.md` | S4 | ✅ |
+| WF-004 Fiche technique PDF | `wireframes/sprint_ip/WF-004_fiche_technique_pdf.md` | IP | ✅ |
 | WF-020 Adresses multiples | `wireframes/sprint_ip/WF-020_adresses_multiples.md` | IP | ✅ |
 | Design Handoff S1 (HTML) | `design_handoff/wireframes_sprint_01.html` | S1 | ✅ |
-| Design Handoff S2 (HTML) | `design_handoff/wireframes_sprint_02.html` | S2 | 🔲 |
-| Design Handoff S3 (HTML) | `design_handoff/wireframes_sprint_03.html` | S3 | 🔲 |
+| Design Handoff S2 (HTML) | `design_handoff/wireframes_sprint_02.html` | S2 | ✅ |
+| Design Handoff S3 (HTML) | `design_handoff/wireframes_sprint_03.html` | S3 | ✅ |
 | Design Handoff S4 (HTML) | `design_handoff/wireframes_sprint_04.html` | S4 | ✅ |
 
 ---
@@ -294,7 +297,7 @@ Project_test__ecommerce_b2b/
 | Couverture BDD | 22/23 US — US-017 → Phase 2 |
 | Cas de test produits | **84 TC** (FEAT-001 à 007) |
 | Scénarios BDD | **~119 scénarios** |
-| Wireframes lo-fi | **18 WF** (S1→S4 + IP) |
+| Wireframes lo-fi | **21 WF** (S1→S4 + IP) |
 | Process diagrams | **8 BP** (architecture globale + 7 flux) |
 | Bugs critiques prod | **0** |
 | Bugs majeurs résolus | 2 (incident 3DS Visa + Sprint 4 grille tarifaire) |
