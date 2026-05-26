@@ -141,12 +141,14 @@ Project_test__ecommerce_b2b/
     │   │   ├── WF-007_validation_compte_admin.md
     │   │   ├── WF-009_panier_b2b.md
     │   │   ├── WF-010_checkout_commande.md
+    │   │   ├── WF-011_confirmation_commande.md
     │   │   ├── WF-013_dashboard_backoffice.md
     │   │   └── WF-014_suivi_commande.md
     │   └── sprint_03/
     │       ├── WF-012_historique_commandes.md
     │       ├── WF-015_export_csv_backoffice.md
     │       ├── WF-016_paiement_stripe_3ds.md
+    │       ├── WF-017_succes_paiement.md
     │       └── WF-018_facture_pdf.md
     ├── wireframes/
     │   └── sprint_04/
@@ -155,6 +157,7 @@ Project_test__ecommerce_b2b/
     │       ├── WF-019_frais_livraison.md
     │       └── WF-021_suivi_transporteur.md
     │   └── sprint_ip/
+    │       ├── WF-004_fiche_technique_pdf.md
     │       └── WF-020_adresses_multiples.md
     └── design_handoff/
         ├── wireframes_sprint_01.html  ← Rendu visuel interactif navigateur
