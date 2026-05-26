@@ -1,0 +1,468 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Story Map — Company-Test e-Commerce B2B</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11px;
+    background: #f4f6f9;
+    color: #1a1a2e;
+    padding: 20px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header h1 { font-size: 20px; font-weight: 700; letter-spacing: .5px; }
+  .header .meta { font-size: 10px; opacity: .75; text-align: right; line-height: 1.6; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .legend-dot {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ── MAP CONTAINER ── */
+  .map-container { overflow-x: auto; }
+
+  table.story-map {
+    border-collapse: separate;
+    border-spacing: 5px;
+    min-width: 1100px;
+    width: 100%;
+  }
+
+  /* ── BACKBONE (activités) ── */
+  .backbone-label {
+    background: #1a1a2e;
+    color: white;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    padding: 8px 6px;
+    text-align: center;
+    border-radius: 6px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    width: 28px;
+  }
+
+  .activity {
+    background: #1a1a2e;
+    color: white;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  /* ── TÂCHES ── */
+  .task {
+    background: #e8ecf0;
+    font-weight: 600;
+    font-size: 10px;
+    padding: 8px 6px;
+    border-radius: 6px;
+    text-align: center;
+    border-top: 3px solid #6c757d;
+    vertical-align: top;
+  }
+
+  /* ── CARDS (User Stories) ── */
+  .card {
+    border-radius: 6px;
+    padding: 7px 6px;
+    font-size: 10px;
+    line-height: 1.4;
+    vertical-align: top;
+    border-top: 3px solid transparent;
+  }
+  .card .us-id {
+    font-weight: 700;
+    font-size: 9px;
+    opacity: .8;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .card.must    { background: #fff3cd; border-top-color: #f0a500; }
+  .card.should  { background: #d1ecf1; border-top-color: #17a2b8; }
+  .card.could   { background: #d4edda; border-top-color: #28a745; }
+  .card.phase2  { background: #f8d7da; border-top-color: #dc3545; }
+  .card.done    { background: #c3e6cb; border-top-color: #155724; opacity: .9; }
+  .card.done::after { content: " ✅"; }
+  .card.spike   { background: #e2d9f3; border-top-color: #6f42c1; }
+
+  /* ── RELEASE BANDS ── */
+  .release-row td { padding: 0; }
+  .release-band {
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: left;
+  }
+  .r-s1   { background: #fff3cd; color: #856404; border-left: 4px solid #f0a500; }
+  .r-s2   { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
+  .r-s3   { background: #cce5ff; color: #004085; border-left: 4px solid #007bff; }
+  .r-s4   { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+  .r-ip   { background: #e2d9f3; color: #432874; border-left: 4px solid #6f42c1; }
+  .r-ph2  { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+
+  /* ── SWIMLANE LABELS ── */
+  .swimlane-label {
+    background: #495057;
+    color: white;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    padding: 6px 8px;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .empty { background: transparent; }
+  .separator td { height: 10px; }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; padding: 8px; font-size: 9px; }
+    .header { break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    table.story-map { page-break-inside: auto; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @page { size: A3 landscape; margin: 12mm; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>Story Map — Company-Test e-Commerce B2B</h1>
+    <div style="font-size:11px;margin-top:4px;opacity:.85;">Drupal 10 + Commerce 2.x · PI-2026-Q3</div>
+  </div>
+  <div class="meta">
+    Atelier : 2026-04-15<br>
+    PO · BA · UX/UI · Dev Lead<br>
+    Méthode : Jeff Patton Story Mapping
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#f0a500"></div>Must Have</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#17a2b8"></div>Should Have</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#28a745"></div>Could Have</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6f42c1"></div>Spike</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#dc3545"></div>Phase 2 / Hors scope</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#155724"></div>✅ Livré (Sprint 1)</div>
+</div>
+
+<!-- STORY MAP -->
+<div class="map-container">
+<table class="story-map">
+
+  <!-- ══ SWIMLANE : ACHETEUR B2B ══ -->
+  <tr>
+    <td colspan="9" class="swimlane-label">👤 Acheteur B2B</td>
+  </tr>
+
+  <!-- ACTIVITÉS (Backbone) -->
+  <tr>
+    <td class="backbone-label">Backbone</td>
+    <td class="activity">🔍 Découvrir<br>le catalogue</td>
+    <td class="activity">📝 S'inscrire<br>compte B2B</td>
+    <td class="activity" colspan="2">🔑 Se connecter</td>
+    <td class="activity" colspan="2">🛒 Commander</td>
+    <td class="activity">💳 Payer</td>
+    <td class="activity">📦 Suivre</td>
+  </tr>
+
+  <!-- TÂCHES -->
+  <tr>
+    <td class="empty"></td>
+    <td class="task">Naviguer par<br>catégorie</td>
+    <td class="task">Remplir formulaire<br>d'inscription</td>
+    <td class="task">Connexion<br>email + mdp</td>
+    <td class="task">Gestion<br>statuts</td>
+    <td class="task">Panier &amp;<br>N° BC</td>
+    <td class="task">Validation<br>commande</td>
+    <td class="task">Paiement<br>CB 3DS</td>
+    <td class="task">Suivi &amp;<br>historique</td>
+  </tr>
+
+  <!-- RELEASE : SPRINT 1 -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-s1">🏃 Sprint 1 — Walking Skeleton : compte B2B activé + catalogue navigable</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="card done"><span class="us-id">US-001</span>Navigation<br>par catégorie</td>
+    <td class="card done"><span class="us-id">US-005</span>Formulaire<br>+ SIRET regex</td>
+    <td class="card done"><span class="us-id">US-006</span>Connexion<br>réussie</td>
+    <td class="card done"><span class="us-id">US-006</span>Compte en<br>attente / refusé</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card spike"><span class="us-id">SPIKE</span>Éval. PSP<br>Stripe ✅</td>
+    <td class="empty"></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="card done"><span class="us-id">US-002</span>Fiche produit<br>+ tarif B2B</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card done"><span class="us-id">US-006</span>Blocage<br>5 tentatives</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+  </tr>
+
+  <!-- RELEASE : SPRINT 2 -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-s2">🏃 Sprint 2 — Commande bout en bout</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card must"><span class="us-id">US-009</span>Ajout au<br>panier</td>
+    <td class="card must"><span class="us-id">US-011</span>Email<br>confirmation</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card must"><span class="us-id">US-010</span>N° bon de<br>commande</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+  </tr>
+
+  <!-- RELEASE : SPRINT 3 -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-s3">🏃 Sprint 3 — Paiement &amp; Facturation</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card should"><span class="us-id">US-012</span>Historique<br>commandes</td>
+    <td class="card must"><span class="us-id">US-016</span>Paiement CB<br>3D Secure</td>
+    <td class="empty"></td>
+  </tr>
+
+  <!-- RELEASE : SPRINT 4 -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-s4">🏃 Sprint 4 — Enrichissement UX &amp; Livraisons</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="card should"><span class="us-id">US-003</span>Filtres<br>produits</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card should"><span class="us-id">US-019</span>Frais livraison<br>automatique</td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card should"><span class="us-id">US-021</span>N° suivi<br>transporteur</td>
+  </tr>
+
+  <!-- RELEASE : IP SPRINT / COULD HAVE -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-ip">🔬 IP Sprint — Could Have</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="card could"><span class="us-id">US-004</span>Fiche tech.<br>PDF</td>
+    <td class="card could"><span class="us-id">US-023</span>Email bienvenue<br>+ guide</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card could"><span class="us-id">US-020</span>Adresses<br>multiples</td>
+  </tr>
+
+  <!-- RELEASE : PHASE 2 -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-ph2">🚀 Phase 2 — Hors scope V1</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card phase2"><span class="us-id">—</span>SIRET via<br>API INSEE</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card phase2"><span class="us-id">US-017</span>Paiement<br>différé 30j</td>
+    <td class="empty"></td>
+  </tr>
+
+  <!-- SÉPARATEUR -->
+  <tr class="separator"><td colspan="9"></td></tr>
+
+  <!-- ══ SWIMLANE : ADMIN Company-Test ══ -->
+  <tr>
+    <td colspan="9" class="swimlane-label">🔧 Admin Company-Test</td>
+  </tr>
+
+  <!-- ACTIVITÉS Admin -->
+  <tr>
+    <td class="backbone-label">Backbone</td>
+    <td colspan="4" class="activity">👥 Gérer les comptes B2B</td>
+    <td colspan="4" class="activity">📋 Gérer les commandes</td>
+  </tr>
+
+  <!-- TÂCHES Admin -->
+  <tr>
+    <td class="empty"></td>
+    <td class="task">Notif nouvelle<br>demande</td>
+    <td class="task">Liste demandes<br>en attente</td>
+    <td class="task">Valider /<br>Rejeter</td>
+    <td class="empty"></td>
+    <td class="task">Dashboard<br>commandes</td>
+    <td class="task">Statut +<br>notification</td>
+    <td class="task">Export<br>CSV</td>
+    <td class="task">Facture<br>PDF</td>
+  </tr>
+
+  <!-- Sprint 1 Admin -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-s1">🏃 Sprint 1 (reporté → Sprint 2 pour US-007)</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="card done"><span class="us-id">US-007</span>Notif email<br>nouvelle demande</td>
+    <td class="card must"><span class="us-id">US-007</span>Badge compteur<br>en attente</td>
+    <td class="card must"><span class="us-id">US-007</span>Valider compte<br>→ email activ.</td>
+    <td class="card must"><span class="us-id">US-007</span>Rejeter + motif<br>obligatoire</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+  </tr>
+
+  <!-- Sprint 2 Admin -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-s2">🏃 Sprint 2</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card must"><span class="us-id">US-013</span>Dashboard<br>commandes B2B</td>
+    <td class="card must"><span class="us-id">US-014</span>Statut + notif<br>client</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+  </tr>
+
+  <!-- Sprint 3 Admin -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-s3">🏃 Sprint 3</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card should"><span class="us-id">US-015</span>Export<br>commandes CSV</td>
+    <td class="card should"><span class="us-id">US-018</span>Génération<br>facture PDF</td>
+  </tr>
+
+  <!-- Could Have Admin -->
+  <tr class="release-row">
+    <td></td>
+    <td colspan="8"><div class="release-band r-ip">🔬 IP Sprint</div></td>
+  </tr>
+  <tr>
+    <td class="empty"></td>
+    <td class="card could"><span class="us-id">US-022</span>Notif email<br>demande compte</td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="empty"></td>
+    <td class="card could"><span class="us-id">US-008</span>Tarifs négociés<br>par client</td>
+  </tr>
+
+</table>
+</div>
+
+<!-- FOOTER -->
+<div style="margin-top:20px;padding:12px 16px;background:#e9ecef;border-radius:8px;font-size:9px;color:#495057;display:flex;justify-content:space-between;">
+  <div><strong>Projet :</strong> Company-Test e-Commerce B2B Drupal · <strong>PI :</strong> PI-2026-Q3 · <strong>Vélocité :</strong> 16 SP/sprint (mesurée S1) · <strong>Total V1 :</strong> 70 SP · 23 US</div>
+  <div><strong>Export PDF :</strong> Ctrl+P → Enregistrer en PDF → Format A3 Paysage</div>
+</div>
+
+</body>
+</html>
