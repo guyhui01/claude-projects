@@ -99,13 +99,13 @@ Project_test__ecommerce_b2b/
 
 > ² US-017 — Paiement différé 30j fin de mois : complexité juridique → reporté en Phase 2
 
-## Points de qualité — Résolus ✅
+## Points de qualité
 
-| # | Constat initial | Correction appliquée |
-|---|----------------|----------------------|
-| Q1 | `bdd_gherkin/US-017.feature` absent | Fichier créé — spec Phase 2 taggée `@phase2 @hors-scope-v1` |
-| Q2 | Design Handoff S2/S3 HTML statut 🔲 | Statut mis à jour ✅ — fichiers HTML avec contenu vérifié |
-| Q3 | WF-004, WF-011, WF-017 manquants | 3 wireframes créés : fiche technique PDF · confirmation commande · succès paiement 3DS |
+| # | Constat initial | Correction appliquée | Statut |
+|---|----------------|----------------------|--------|
+| Q1 | `bdd_gherkin/US-017.feature` absent | Fichier créé — spec Phase 2 taggée `@phase2 @hors-scope-v1` | ✅ Résolu |
+| Q2 | Design Handoff S2/S3 HTML statut 🔲 | Statut mis à jour — fichiers HTML avec contenu vérifié | ✅ Résolu |
+| Q3 | WF-004, WF-011, WF-017 manquants | 3 wireframes créés : fiche technique PDF · confirmation commande · succès paiement 3DS | ✅ Résolu |
 
 ## Activation des agents
 
