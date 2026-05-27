@@ -3,8 +3,8 @@
 ## Lien Epic
 EPIC-001 — `../epics/EPIC-001.md`
 
-## MoSCoW
-Could Have
+## WSJF
+> BV : 2 · TC : 1 · RR/OE : 1 · CoD : 4 · Size : 2 → **WSJF : 2,0** (Rang #7)
 
 ## Description
 Automatiser les notifications de demande de compte et l'email de bienvenue pour faciliter l'onboarding des nouveaux acheteurs B2B.

@@ -3,8 +3,8 @@
 ## Lien Epic
 EPIC-001 — `../epics/EPIC-001.md`
 
-## MoSCoW
-Must Have
+## WSJF
+> BV : 13 · TC : 13 · RR/OE : 8 · CoD : 34 · Size : 8 → **WSJF : 4,3** (Rang #2)
 
 ## Benefit Hypothesis
 Si la création de compte B2B est rapide et la validation sous 24h, alors le taux de conversion des visites en comptes actifs dépassera 60%.

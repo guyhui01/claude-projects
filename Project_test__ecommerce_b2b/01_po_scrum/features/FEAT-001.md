@@ -3,8 +3,8 @@
 ## Lien Epic
 EPIC-001 — `../epics/EPIC-001.md`
 
-## MoSCoW
-Must Have
+## WSJF
+> BV : 13 · TC : 13 · RR/OE : 5 · CoD : 31 · Size : 13 → **WSJF : 2,4** (Rang #5)
 
 ## Benefit Hypothesis
 Si les acheteurs B2B peuvent naviguer et filtrer le catalogue avec les fiches techniques, alors les demandes de devis par email diminueront de 40%.

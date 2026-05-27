@@ -3,8 +3,8 @@
 ## Lien Epic
 EPIC-001 — `../epics/EPIC-001.md`
 
-## MoSCoW
-Must Have
+## WSJF
+> BV : 8 · TC : 8 · RR/OE : 8 · CoD : 24 · Size : 5 → **WSJF : 4,8** (Rang #1)
 
 ## Benefit Hypothesis
 Si l'équipe commerciale dispose d'un tableau de bord commandes en temps réel, alors le délai de traitement des commandes passera de 48h à 4h.

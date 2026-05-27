@@ -87,15 +87,15 @@ Project_test__ecommerce_b2b/
 
 ## Features & User Stories
 
-| Feature | Libellé | MoSCoW | US | Statut |
-|---------|---------|--------|----|--------|
-| FEAT-001 | Catalogue produits B2B | Must | US-001 à US-004 | ✅ |
-| FEAT-002 | Gestion des comptes & accès B2B | Must | US-005 à US-008 | ✅ |
-| FEAT-003 | Panier & processus de commande | Must | US-009 à US-012 | ✅ |
-| FEAT-004 | Back-office gestion commandes | Must | US-013 à US-015 | ✅ |
-| FEAT-005 | Paiement & facturation B2B | Should | US-016, US-017², US-018 | ✅ (US-017 → P2) |
-| FEAT-006 | Gestion des livraisons | Should | US-019 à US-021 | ✅ |
-| FEAT-007 | Onboarding & validation client B2B | Could | US-022 à US-023 | ✅ |
+| Feature | Libellé | WSJF | Rang | US | Statut |
+|---------|---------|------|------|----|--------|
+| FEAT-004 | Back-office gestion commandes | **4,8** | #1 | US-013 à US-015 | ✅ |
+| FEAT-002 | Gestion des comptes & accès B2B | **4,3** | #2 | US-005 à US-008 | ✅ |
+| FEAT-003 | Panier & processus de commande | **3,3** | #3 | US-009 à US-012 | ✅ |
+| FEAT-005 | Paiement & facturation B2B | **2,6** | #4 | US-016, US-017², US-018 | ✅ (US-017 → P2) |
+| FEAT-001 | Catalogue produits B2B | **2,4** | #5 | US-001 à US-004 | ✅ |
+| FEAT-006 | Gestion des livraisons | **2,2** | #6 | US-019 à US-021 | ✅ |
+| FEAT-007 | Onboarding & validation client B2B | **2,0** | #7 | US-022 à US-023 | ✅ |
 
 > ² US-017 — Paiement différé 30j fin de mois : complexité juridique → reporté en Phase 2
 

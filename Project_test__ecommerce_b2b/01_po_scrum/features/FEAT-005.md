@@ -3,8 +3,8 @@
 ## Lien Epic
 EPIC-001 — `../epics/EPIC-001.md`
 
-## MoSCoW
-Should Have
+## WSJF
+> BV : 8 · TC : 5 · RR/OE : 8 · CoD : 21 · Size : 8 → **WSJF : 2,6** (Rang #4)
 
 ## Description
 Permettre aux acheteurs B2B de payer par CB sécurisée (3D Secure) et de recevoir automatiquement leur facture PDF par email.
