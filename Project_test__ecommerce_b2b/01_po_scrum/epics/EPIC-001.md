@@ -27,17 +27,19 @@ Afin de **digitaliser notre activité de vente de câbles FTTH et boîtiers fibr
 
 ## Features associées
 
-> Priorisation WSJF (SAFe) — CoD = BV + TC + RR/OE · WSJF = CoD / Size · Échelle Fibonacci : 1·2·3·5·8·13
+> Priorisation WSJF (SAFe) — CoD = BV + TC + RR/OE · WSJF = CoD / Size · cotation relative, plus petit = 1 par colonne · Fibonacci : 1·2·3·5·8·13·20
 
 | ID | Feature | BV | TC | RR/OE | CoD | Size | WSJF | Rang |
 |----|---------|----|----|-------|-----|------|------|------|
-| FEAT-004 | Back-office gestion commandes | 8 | 8 | 8 | 24 | 5 | **4,8** | #1 |
-| FEAT-002 | Gestion des comptes & accès B2B | 13 | 13 | 8 | 34 | 8 | **4,3** | #2 |
-| FEAT-003 | Panier & processus de commande | 13 | 8 | 5 | 26 | 8 | **3,3** | #3 |
-| FEAT-005 | Paiement & facturation B2B | 8 | 5 | 8 | 21 | 8 | **2,6** | #4 |
-| FEAT-001 | Catalogue produits B2B | 13 | 13 | 5 | 31 | 13 | **2,4** | #5 |
-| FEAT-006 | Gestion des livraisons | 5 | 3 | 3 | 11 | 5 | **2,2** | #6 |
-| FEAT-007 | Onboarding & validation client B2B | 2 | 1 | 1 | 4 | 2 | **2,0** | #7 |
+| FEAT-003 | Panier & processus de commande | 20 | 8 | 3 | 31 | 2 | **15,5** | #1 |
+| FEAT-001 | Catalogue produits B2B | 13 | 20 | 8 | 41 | 5 | **8,2** | #2 |
+| FEAT-004 | Back-office gestion commandes | 3 | 5 | 5 | 13 | 2 | **6,5** | #3 |
+| FEAT-002 | Gestion des comptes & accès B2B | 8 | 13 | 20 | 41 | 8 | **5,1** | #4 |
+| FEAT-007 | Onboarding & validation client B2B | 1 | 1 | 1 | 3 | 1 | **3,0** | #5 |
+| FEAT-006 | Gestion des livraisons | 2 | 2 | 2 | 6 | 3 | **2,0** | #6 |
+| FEAT-005 | Paiement & facturation B2B | 5 | 3 | 13 | 21 | 13 | **1,6** | #7 |
+
+> **FEAT-005 #7** malgré un fort RR/OE (conformité PSD2/3DS) : c'est le plus gros Job Size (13). Réponse SAFe = **splitter** — déjà amorcé (US-017 paiement différé → Phase 2). Le séquencement réel intègre aussi les dépendances (Program Board), distinctes du WSJF.
 
 ## PI associé
 PI-2026-Q3 — voir `../pi_planning/PI-2026-Q3.md`

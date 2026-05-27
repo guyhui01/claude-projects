@@ -4,7 +4,7 @@
 EPIC-001 — `../epics/EPIC-001.md`
 
 ## WSJF
-> BV : 5 · TC : 3 · RR/OE : 3 · CoD : 11 · Size : 5 → **WSJF : 2,2** (Rang #6)
+> BV : 2 · TC : 2 · RR/OE : 2 · CoD : 6 · Size : 3 → **WSJF : 2,0** (Rang #6)
 
 ## Description
 Calculer automatiquement les frais de livraison, gérer les adresses multiples et envoyer le numéro de suivi transporteur à l'acheteur B2B.

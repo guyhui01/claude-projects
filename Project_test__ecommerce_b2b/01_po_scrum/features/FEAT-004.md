@@ -4,7 +4,7 @@
 EPIC-001 — `../epics/EPIC-001.md`
 
 ## WSJF
-> BV : 8 · TC : 8 · RR/OE : 8 · CoD : 24 · Size : 5 → **WSJF : 4,8** (Rang #1)
+> BV : 3 · TC : 5 · RR/OE : 5 · CoD : 13 · Size : 2 → **WSJF : 6,5** (Rang #3)
 
 ## Benefit Hypothesis
 Si l'équipe commerciale dispose d'un tableau de bord commandes en temps réel, alors le délai de traitement des commandes passera de 48h à 4h.

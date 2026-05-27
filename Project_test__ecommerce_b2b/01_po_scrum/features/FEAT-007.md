@@ -4,7 +4,7 @@
 EPIC-001 — `../epics/EPIC-001.md`
 
 ## WSJF
-> BV : 2 · TC : 1 · RR/OE : 1 · CoD : 4 · Size : 2 → **WSJF : 2,0** (Rang #7)
+> BV : 1 · TC : 1 · RR/OE : 1 · CoD : 3 · Size : 1 → **WSJF : 3,0** (Rang #5)
 
 ## Description
 Automatiser les notifications de demande de compte et l'email de bienvenue pour faciliter l'onboarding des nouveaux acheteurs B2B.

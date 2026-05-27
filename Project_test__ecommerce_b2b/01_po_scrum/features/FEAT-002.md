@@ -4,7 +4,7 @@
 EPIC-001 — `../epics/EPIC-001.md`
 
 ## WSJF
-> BV : 13 · TC : 13 · RR/OE : 8 · CoD : 34 · Size : 8 → **WSJF : 4,3** (Rang #2)
+> BV : 8 · TC : 13 · RR/OE : 20 · CoD : 41 · Size : 8 → **WSJF : 5,1** (Rang #4)
 
 ## Benefit Hypothesis
 Si la création de compte B2B est rapide et la validation sous 24h, alors le taux de conversion des visites en comptes actifs dépassera 60%.

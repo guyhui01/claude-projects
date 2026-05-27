@@ -4,7 +4,7 @@
 EPIC-001 — `../epics/EPIC-001.md`
 
 ## WSJF
-> BV : 13 · TC : 8 · RR/OE : 5 · CoD : 26 · Size : 8 → **WSJF : 3,3** (Rang #3)
+> BV : 20 · TC : 8 · RR/OE : 3 · CoD : 31 · Size : 2 → **WSJF : 15,5** (Rang #1)
 
 ## Benefit Hypothesis
 Si le processus de commande est réalisable en moins de 5 clics avec numéro de BC interne, alors 70% des acheteurs B2B adopteront le canal e-commerce vs appel/email.

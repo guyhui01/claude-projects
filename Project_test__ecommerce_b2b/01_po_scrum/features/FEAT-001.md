@@ -4,7 +4,7 @@
 EPIC-001 — `../epics/EPIC-001.md`
 
 ## WSJF
-> BV : 13 · TC : 13 · RR/OE : 5 · CoD : 31 · Size : 13 → **WSJF : 2,4** (Rang #5)
+> BV : 13 · TC : 20 · RR/OE : 8 · CoD : 41 · Size : 5 → **WSJF : 8,2** (Rang #2)
 
 ## Benefit Hypothesis
 Si les acheteurs B2B peuvent naviguer et filtrer le catalogue avec les fiches techniques, alors les demandes de devis par email diminueront de 40%.
